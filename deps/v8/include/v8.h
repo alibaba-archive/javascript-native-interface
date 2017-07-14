@@ -5380,6 +5380,8 @@ class V8_EXPORT Isolate {
    */
   static Isolate* GetCurrent();
 
+  void* GetEnv();
+
   /**
    * Custom callback used by embedders to help V8 determine if it should abort
    * when it throws and no internal handler is predicted to catch the

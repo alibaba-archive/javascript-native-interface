@@ -68,6 +68,7 @@
       'lib/v8.js',
       'lib/vm.js',
       'lib/zlib.js',
+      'lib/nativeload.js',
       'lib/internal/child_process.js',
       'lib/internal/freelist.js',
       'lib/internal/module.js',
@@ -87,7 +88,8 @@
         'node_js2c#host',
         'deps/cares/cares.gyp:cares',
         'deps/v8/tools/gyp/v8.gyp:v8',
-        'deps/v8/tools/gyp/v8.gyp:v8_libplatform'
+        'deps/v8/tools/gyp/v8.gyp:v8_libplatform',
+        'deps/jsni/jsni.gyp:jsni'
       ],
 
       'include_dirs': [
@@ -95,6 +97,8 @@
         'tools/msvs/genfiles',
         'deps/uv/src/ares',
         '<(SHARED_INTERMEDIATE_DIR)', # for node_natives.h
+        'deps/jsni',
+        'deps/jsni/src/v8',
         'deps/v8' # include/v8_platform.h
       ],
 
@@ -171,6 +175,7 @@
         'src/util.cc',
         'src/string_search.cc',
         'deps/http_parser/http_parser.h',
+        'deps/jsni/include/jsni.h',
         'deps/v8/include/v8.h',
         'deps/v8/include/v8-debug.h',
         '<(SHARED_INTERMEDIATE_DIR)/node_natives.h',
@@ -418,6 +423,7 @@
         [ 'OS=="freebsd" or OS=="linux"', {
           'ldflags': [ '-Wl,-z,noexecstack',
                        '-Wl,--whole-archive <(V8_BASE)',
+                       '-Wl,--whole-archive <(JSNI)',
                        '-Wl,--no-whole-archive' ]
         }],
         [ 'OS=="sunos"', {

@@ -42,6 +42,7 @@
 #include "v8-debug.h"
 #include "v8-profiler.h"
 #include "zlib.h"
+#include "jsni-nativeload.h"
 
 #include <errno.h>
 #include <limits.h>  // PATH_MAX
@@ -2088,6 +2089,14 @@ struct node_module* get_linked_module(const char* name) {
   return mp;
 }
 
+// Register nativeLoad to process object.
+void RegisterJSNI(Environment* env) {
+  Local<Object> process = env->process_object();
+  Isolate* isolate = env->isolate();
+
+  V8RegisterJSNIEnvironment(isolate, process);
+}
+
 typedef void (UV_DYNAMIC* extInit)(Local<Object> exports);
 
 // DLOpen is process.dlopen(module, filename).
@@ -3934,6 +3943,7 @@ Environment* CreateEnvironment(Isolate* isolate,
 
   SetupProcessObject(env, argc, argv, exec_argc, exec_argv);
   LoadAsyncWrapperInfo(env);
+  RegisterJSNI(env);
 
   return env;
 }

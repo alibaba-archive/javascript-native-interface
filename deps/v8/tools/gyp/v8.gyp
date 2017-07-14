@@ -55,6 +55,8 @@
           ],
           'include_dirs': [
             '../..',
+            '../../../jsni/include',
+            '../../../jsni/src/v8',
           ],
           'defines': [
             'V8_SHARED',
@@ -94,6 +96,8 @@
       'direct_dependent_settings': {
         'include_dirs': [
           '../../include',
+          '../../../jsni/include',
+          '../../../jsni/src/v8',
         ],
       },
     },
@@ -176,6 +180,8 @@
       ],
       'include_dirs+': [
         '../..',
+        '../../../jsni/include',
+        '../../../jsni/src/v8',
       ],
       'sources': [
         '<(SHARED_INTERMEDIATE_DIR)/libraries.cc',
@@ -221,6 +227,8 @@
       ],
       'include_dirs+': [
         '../..',
+        '../../../jsni/include',
+        '../../../jsni/src/v8',
       ],
       'sources': [
         '<(SHARED_INTERMEDIATE_DIR)/libraries.cc',
@@ -282,6 +290,8 @@
           ],
           'include_dirs+': [
             '../..',
+            '../../../jsni/include',
+            '../../../jsni/src/v8',
           ],
           'sources': [
             '../../src/snapshot/natives-external.cc',
@@ -363,6 +373,8 @@
       },
       'include_dirs+': [
         '../..',
+        '../../../jsni/include',
+        '../../../jsni/src/v8',
       ],
       'defines': [
         # TODO(jochen): Remove again after this is globally turned on.
@@ -967,6 +979,7 @@
         '../../src/zone-containers.h',
         '../../src/third_party/fdlibm/fdlibm.cc',
         '../../src/third_party/fdlibm/fdlibm.h',
+        '../../../jsni/src/v8/jsni-env-ext.cc',
       ],
       'conditions': [
         ['want_separate_host_toolset==1', {
@@ -1384,6 +1397,8 @@
       },
       'include_dirs+': [
         '../..',
+        '../../../jsni/include',
+        '../../../jsni/src/v8',
       ],
       'sources': [
         '../../src/base/adapters.h',
@@ -1650,6 +1665,8 @@
       ],
       'include_dirs+': [
         '../..',
+        '../../../jsni/include',
+        '../../../jsni/src/v8',
       ],
       'sources': [
         '../../include/libplatform/libplatform.h',
@@ -1914,6 +1931,8 @@
       'dependencies': ['v8_base', 'v8_nosnapshot', 'v8_libplatform'],
       'include_dirs+': [
         '../..',
+        '../../../jsni/include',
+        '../../../jsni/src/v8',
       ],
       'sources': [
         '../../src/snapshot/mksnapshot.cc',

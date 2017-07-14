@@ -37,6 +37,7 @@
 #include "src/snapshot/serialize.h"
 #include "src/version.h"
 #include "src/vm-state-inl.h"
+#include "jsni-env-ext.h"
 
 
 namespace v8 {
@@ -1928,6 +1929,11 @@ void Isolate::Deinit() {
   cpu_profiler_ = NULL;
 
   ClearSerializerData();
+
+  if (jsni_env_ != nullptr) {
+    delete jsni_env_;
+    jsni_env_ = nullptr;
+  }
 }
 
 
@@ -2131,6 +2137,8 @@ bool Isolate::Init(Deserializer* des) {
       new CallInterfaceDescriptorData[CallDescriptors::NUMBER_OF_DESCRIPTORS];
   cpu_profiler_ = new CpuProfiler(this);
   heap_profiler_ = new HeapProfiler(heap());
+
+  jsni_env_ = v8::JSNIEnvExt::Create(this);
 
   // Enable logging before setting up the heap
   logger_->SetUp(this);

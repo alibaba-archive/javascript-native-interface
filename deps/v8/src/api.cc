@@ -7096,6 +7096,12 @@ Isolate* Isolate::GetCurrent() {
 }
 
 
+void* Isolate::GetEnv() {
+  i::Isolate* isolate = i::Isolate::Current();
+  return reinterpret_cast<void*>(isolate->GetEnv());
+}
+
+
 Isolate* Isolate::New() {
   Isolate::CreateParams create_params;
   return New(create_params);

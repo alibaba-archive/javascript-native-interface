@@ -27,6 +27,8 @@
 
 namespace v8 {
 
+struct JSNIEnvExt;
+
 namespace base {
 class RandomNumberGenerator;
 }
@@ -396,6 +398,11 @@ class Isolate {
   class EntryStackItem;
  public:
   ~Isolate();
+
+  // Env is a pointer binded to isolate.
+  JSNIEnvExt* GetEnv() {
+    return jsni_env_;
+  }
 
   // A thread has a PerIsolateThreadData instance for each isolate that it has
   // entered. That instance is allocated when the isolate is initially entered
@@ -1368,6 +1375,8 @@ class Isolate {
 
   v8::Isolate::AbortOnUncaughtExceptionCallback
       abort_on_uncaught_exception_callback_;
+
+  JSNIEnvExt* jsni_env_;
 
   friend class ExecutionAccess;
   friend class HandleScopeImplementer;
