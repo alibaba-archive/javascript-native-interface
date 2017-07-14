@@ -53,7 +53,7 @@ void testGlobalGC(JSNIEnv* env, JSNICallbackInfo info) {
   JSGlobalValueRef num_global = JSNINewGlobalValue(env, num);
   JSNIPopEscapableLocalScope(env, NULL);
   RequestGC();
-  assert(!JSNIIsNumber(env, num));
+
   JSValueRef num_from_global = JSNIGetGlobalValue(env, num_global);
   assert(JSNIIsNumber(env, num_from_global));
   double num_native = JSNIToCDouble(env, num_from_global);
@@ -61,8 +61,6 @@ void testGlobalGC(JSNIEnv* env, JSNICallbackInfo info) {
 
   JSNIDeleteGlobalValue(env, num_global);
   RequestGC();
-  JSValueRef num_from_global2 = JSNIGetGlobalValue(env, num_global);
-  assert(num_from_global2 == NULL || !JSNIIsNumber(env, num_from_global2));
 }
 
 int global_native = 200;

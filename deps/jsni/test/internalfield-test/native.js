@@ -25,7 +25,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var assert = require('assert');
-const native = nativeLoad('./build/Release/native');
+const native = nativeLoad('native');
 
 var o = native.setHidden();
 native.testHidden(o);

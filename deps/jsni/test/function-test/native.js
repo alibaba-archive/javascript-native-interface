@@ -25,7 +25,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var assert = require("assert");
-const native = nativeLoad('./build/Release/native');
+const native = nativeLoad('native');
 
 var func = native.newNativeFunction();
 var ret = func(200);

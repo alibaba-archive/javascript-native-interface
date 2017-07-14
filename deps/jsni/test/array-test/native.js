@@ -25,7 +25,7 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var assert = require('assert');
-const native = nativeLoad('./build/Release/native');
+const native = nativeLoad('native');
 var arr = [];
 var obj0 = {p0: 100};
 var obj1 = {p1: 200};
