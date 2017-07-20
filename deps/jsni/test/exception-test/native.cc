@@ -65,6 +65,7 @@ int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "throwRangeError", throwRangeError);
   JSNIRegisterMethod(env, exports, "throwError", throwError);
   JSNIRegisterMethod(env, exports, "hasPendingException", hasPendingException);
-  JSNIRegisterMethod(env, exports, "clearPendingException", clearPendingException);
+  JSNIRegisterMethod(env, exports, "clearPendingException",
+    clearPendingException);
   return JSNI_VERSION_2_0;
 }

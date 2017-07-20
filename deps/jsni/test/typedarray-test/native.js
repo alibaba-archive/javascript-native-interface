@@ -24,18 +24,18 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
+var assert = require("assert");
+const native = nativeLoad("native");
 
 var typedArray = native.createTypedArray();
 
-console.assert(typeof typedArray == "object",
-  "should be an object(typedArray)")
+console.assert(typeof typedArray === "object",
+  "should be an object(typedArray)");
 
-assert(typedArray.constructor == Uint8Array);
-assert(typedArray[0] == 1);
-assert(typedArray[1] == 2);
-assert(typedArray[2] == 3);
+assert(typedArray.constructor === Uint8Array);
+assert(typedArray[0] === 1);
+assert(typedArray[1] === 2);
+assert(typedArray[2] === 3);
 
 var arr = [];
 native.testIsArray(arr);

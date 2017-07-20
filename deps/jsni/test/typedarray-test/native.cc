@@ -34,12 +34,14 @@ void createTypedArray(JSNIEnv* env, JSNICallbackInfo info) {
   uint8_t a[] = {1, 2, 3};
   uint8_t* new_array = static_cast<uint8_t*>(malloc(sizeof a));
   memcpy(new_array, a, sizeof a);
-  JSValueRef js_typed_array = JSNINewTypedArray(env, JsArrayTypeUint8,
-                                  (char*)new_array, sizeof a);
+  JSValueRef js_typed_array =
+    JSNINewTypedArray(env, JsArrayTypeUint8,
+                      reinterpret_cast<char*>(new_array), sizeof a);
 
   assert(JSNIIsTypedArray(env, js_typed_array));
   assert(JSNIGetTypedArrayType(env, js_typed_array) == JsArrayTypeUint8);
-  uint8_t* data = (uint8_t*)(JSNIGetTypedArrayData(env, js_typed_array));
+  uint8_t* data =
+    reinterpret_cast<uint8_t*>(JSNIGetTypedArrayData(env, js_typed_array));
   size_t len = JSNIGetTypedArrayLength(env, js_typed_array);
   assert(len = 3);
   assert(data[0] == 1);

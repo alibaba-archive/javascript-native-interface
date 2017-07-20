@@ -24,16 +24,16 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
+var assert = require("assert");
+const native = nativeLoad("native");
 
-var s = native.symbol('symbol_s');
+var s = native.symbol("symbol_s");
 var empty_s = native.symbol();
 
-assert(typeof s == 'symbol');
-assert(s.toString(), 'Symbol(symbol_s)');
+assert(typeof s === "symbol");
+assert(s.toString(), "Symbol(symbol_s)");
 
-assert(typeof empty_s == 'symbol');
-assert(empty_s.toString(), 'Symbol()');
+assert(typeof empty_s === "symbol");
+assert(empty_s.toString(), "Symbol()");
 
 process.exit();

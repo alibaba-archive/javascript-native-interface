@@ -24,8 +24,8 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
+var assert = require("assert");
+const native = nativeLoad("native");
 
 var notPrimitive = {a : 1};
 var notObject = 123;
@@ -37,7 +37,8 @@ native.StringCheck(notPrimitive);
 try {
   native.FunctionCheck(notFunc);
 } catch(e) {
-  assert(e.toString() == "TypeError: 123 is not a function");
+  var indexString = "is not a function";
+  assert.notEqual(e.toString().indexOf(indexString), -1);
 }
 
 native.ArrayCheck(notObject);

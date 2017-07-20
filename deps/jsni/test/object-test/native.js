@@ -24,14 +24,14 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
+var assert = require("assert");
+const native = nativeLoad("native");
 
 native.testObject();
 
 var obj = {};
 var protoObj = {proto: "proto"};
 Object.setPrototypeOf(obj, protoObj);
-assert(protoObj == native.testGetProto(obj));
+assert(protoObj === native.testGetProto(obj));
 
 process.exit();

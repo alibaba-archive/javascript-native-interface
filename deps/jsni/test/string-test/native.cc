@@ -38,8 +38,8 @@ void testUtf8(JSNIEnv* env, JSNICallbackInfo info) {
   assert(JSNIGetStringUtf8Length(env, str_val) == str_len);
 
   char get_str[str_len];
-  JSNIGetStringUtf8Chars(env, str_val, get_str, str_len + 1);
-  for (size_t i = 0; i < str_len + 1; i++) {
+  JSNIGetStringUtf8Chars(env, str_val, get_str, str_len);
+  for (size_t i = 0; i < str_len; i++) {
     assert(get_str[i] == native_str[i]);
   }
 

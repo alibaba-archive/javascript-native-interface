@@ -24,9 +24,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
+var assert = require("assert");
+const native = nativeLoad("native");
 
-assert(native.testUtf8("string") == "hello, world!");
+assert(native.testUtf8("string") === "hello, world!");
 
 process.exit();

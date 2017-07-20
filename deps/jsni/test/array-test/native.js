@@ -24,15 +24,15 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
+var assert = require("assert");
+const native = nativeLoad("native");
 var arr = [];
 var obj0 = {p0: 100};
 var obj1 = {p1: 200};
 arr[0] = obj0;
 arr[1] = obj1;
 var new_array = native.testArray(arr);
-assert(new_array[0] == obj0);
-assert(new_array[1] == obj1);
+assert(new_array[0] === obj0);
+assert(new_array[1] === obj1);
 
 process.exit();

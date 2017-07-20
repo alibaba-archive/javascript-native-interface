@@ -32,14 +32,14 @@ int field_int = 123;
 void setHidden(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef object = JSNINewObjectWithInternalField(env, 1);
   assert(JSNIInternalFieldCount(env, object) == 1);
-  JSNISetInternalField(env, object, 0, (void*)&field_int);
+  JSNISetInternalField(env, object, 0, reinterpret_cast<void*>(&field_int));
   JSNISetReturnValue(env, info, object);
 }
 
 void testHidden(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef object = JSNIGetArgOfCallback(env, info, 0);
   void* field_ptr = JSNIGetInternalField(env, object, 0);
-  int field_int_get = *(int*)field_ptr;
+  int field_int_get = *reinterpret_cast<int*>(field_ptr);
   assert(field_int_get == 123);
 }
 

@@ -28,7 +28,7 @@
 #include <jsni.h>
 #include <v8.h>
 
-#define DEBUGV8 if(0)printf
+#define DEBUGV8 if (0)printf
 
 // This function is just for testing the correctness of JSNI API.
 int getNumHandlesInternal() {
@@ -74,10 +74,9 @@ void testLocalScope(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef save = JSNIPopEscapableLocalScope(env, obj);
   assert(getNumHandlesInternal() == num_handles + 1);
 
-  isolate->RequestGarbageCollectionForTesting(v8::Isolate::kFullGarbageCollection);
+  isolate->RequestGarbageCollectionForTesting(
+    v8::Isolate::kFullGarbageCollection);
 
-  // obj should be invalid.
-  assert(!JSNIIsNumber(env, obj));
   assert(JSNIIsNumber(env, save));
   JSNISetReturnValue(env, info, save);
 }

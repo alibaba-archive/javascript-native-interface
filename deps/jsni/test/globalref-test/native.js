@@ -24,9 +24,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
-assert(native.testGlobal() == 100);
+var assert = require("assert");
+const native = nativeLoad("native");
+assert(native.testGlobal() === 100);
 native.testGlobalGC();
 native.testGlobalWeakCallback();
 native.testGCCallback();

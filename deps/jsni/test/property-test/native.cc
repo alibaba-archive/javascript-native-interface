@@ -34,14 +34,16 @@ void getter(JSNIEnv* env, JSNICallbackInfo info) {
   int args_length = JSNIGetArgsLengthOfCallback(env, info);
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
   JSValueRef g_this = JSNIGetThisOfCallback(env, info);
-  int* callback_data_p = (int*)JSNIGetDataOfCallback(env, info);
+  int* callback_data_p = reinterpret_cast<int*>(
+    JSNIGetDataOfCallback(env, info));
   assert(arg == NULL);
   assert(args_length == 0);
   JSValueRef str = JSNINewStringFromUtf8(env, "getter is set.", -1);
   JSNISetProperty(env, g_this, "getter", str);
 
   int get_data = *callback_data_p + 1;
-  JSValueRef number = JSNINewNumber(env, (double)get_data);
+  JSValueRef number = JSNINewNumber(env,
+    static_cast<double>(get_data));
   JSNISetReturnValue(env, info, number);
 }
 
@@ -49,7 +51,8 @@ void setter(JSNIEnv* env, JSNICallbackInfo info) {
   int args_length = JSNIGetArgsLengthOfCallback(env, info);
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
   JSValueRef g_this = JSNIGetThisOfCallback(env, info);
-  int* callback_data_p = (int*)JSNIGetDataOfCallback(env, info);
+  int* callback_data_p = reinterpret_cast<int*>(
+    JSNIGetDataOfCallback(env, info));
   assert(arg != NULL);
   assert(args_length == 1);
   assert(*callback_data_p == 100);
@@ -57,7 +60,7 @@ void setter(JSNIEnv* env, JSNICallbackInfo info) {
   JSNISetProperty(env, g_this, "setter", str);
 
   double value = JSNIToCDouble(env, arg);
-  *callback_data_p = (int)value;
+  *callback_data_p = static_cast<int>(value);
 }
 
 void DefineProperty(JSNIEnv* env, JSNICallbackInfo info) {
@@ -68,7 +71,7 @@ void DefineProperty(JSNIEnv* env, JSNICallbackInfo info) {
 
   JSNIPropertyAttributes attr = JSNINone;
   JSNIAccessorPropertyDescriptor accesor =
-    {getter, setter, attr, (void*)(&data)};
+    {getter, setter, attr, reinterpret_cast<void*>(&data)};
   JSNIPropertyDescriptor des =
     {NULL, &accesor};
 

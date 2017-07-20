@@ -31,7 +31,8 @@
 // Only for testing use.
 void RequestGC() {
   v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  isolate->RequestGarbageCollectionForTesting(v8::Isolate::kFullGarbageCollection);
+  isolate->RequestGarbageCollectionForTesting(
+    v8::Isolate::kFullGarbageCollection);
 }
 
 void testGlobal(JSNIEnv* env, JSNICallbackInfo info) {
@@ -103,7 +104,8 @@ void testGCCallback(JSNIEnv* env, JSNICallbackInfo info) {
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "testGlobal", testGlobal);
   JSNIRegisterMethod(env, exports, "testGlobalGC", testGlobalGC);
-  JSNIRegisterMethod(env, exports, "testGlobalWeakCallback", testGlobalWeakCallback);
+  JSNIRegisterMethod(env, exports, "testGlobalWeakCallback",
+    testGlobalWeakCallback);
   JSNIRegisterMethod(env, exports, "testGCCallback", testGCCallback);
   return JSNI_VERSION_2_0;
 }

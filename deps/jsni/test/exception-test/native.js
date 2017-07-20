@@ -24,27 +24,28 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
+"use strict";
+
+var assert = require("assert");
+const native = nativeLoad("native");
 var str = "string";
-var num = 2;
 
 try {
   native.throwTypeError(str);
 } catch(error) {
-  assert(error.toString() == "TypeError: Wrong parameter type.");
+  assert(error.toString() === "TypeError: Wrong parameter type.");
 }
 
 try {
   native.throwRangeError(str);
 } catch(error) {
-  assert(error.toString() == "RangeError: Range is out of limit.");
+  assert(error.toString() === "RangeError: Range is out of limit.");
 }
 
 try {
   native.throwError(str);
 } catch(error) {
-  assert(error.toString() == "Error: Error.");
+  assert(error.toString() === "Error: Error.");
 }
 
 // Check pending exception and clear pending exception.
@@ -53,14 +54,14 @@ function throwError() {
   throw err;
 }
 
-var test = false;
+var flag = false;
 
 try {
   native.hasPendingException(throwError);
 } catch(error) {
-  test = true;
+  flag = true;
 }
-assert(test);
+assert(flag);
 
 try {
   native.clearPendingException(throwError);

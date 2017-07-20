@@ -25,19 +25,19 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 var assert = require("assert");
-const native = nativeLoad('native');
+const native = nativeLoad("native");
 
 var func = native.newNativeFunction();
 var ret = func(200);
-assert(ret == 200);
+assert(ret === 200);
 
-assert(typeof func == 'function');
+assert(typeof func === "function");
 native.testIsFunction(func);
 
 var ret1 = native.callFunction(func);
-assert(ret1 == 200);
+assert(ret1 === 200);
 
 var this_value = native.getThis();
-assert(this_value == native);
+assert(this_value === native);
 
 process.exit();

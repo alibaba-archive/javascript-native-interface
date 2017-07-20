@@ -24,22 +24,22 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-var assert = require('assert');
-const native = nativeLoad('native');
+var assert = require("assert");
+const native = nativeLoad("native");
 
 // Test getter and setter.
 var obj = {};
 native.define_property(obj);
 
-assert(obj.abc == 101);
+assert(obj.abc === 101);
 obj.abc = 1000;
-assert(obj.abc == 1001);
-assert(obj.getter == "getter is set.");
-assert(obj.setter == "setter is set.");
+assert(obj.abc === 1001);
+assert(obj.getter === "getter is set.");
+assert(obj.setter === "setter is set.");
 
 // Test define property.
-var obj_2 = {}
+var obj_2 = {};
 native.define_property_2(obj_2);
-assert(obj_2.abc_2 == "Hello world!");
+assert(obj_2.abc_2 === "Hello world!");
 
 process.exit();

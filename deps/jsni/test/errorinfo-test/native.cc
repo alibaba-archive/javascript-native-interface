@@ -24,12 +24,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <assert.h>
-#include <cmath>
 #include <jsni.h>
+
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <execinfo.h>
+#include <cmath>
 
 void print_stack(int stack_count) {
   int count;
@@ -46,13 +47,13 @@ void print_stack(int stack_count) {
 }
 
 void AssertHelper(JSNIEnv* env) {
-  if(!JSNIGetLastErrorInfo(env).error_code) {
+  if (!JSNIGetLastErrorInfo(env).error_code) {
     fprintf(stderr, "%s\n", "Error is expected!.");
     print_stack(3);
     assert(0);
   }
 
-  if(JSNIGetLastErrorInfo(env).error_code) {
+  if (JSNIGetLastErrorInfo(env).error_code) {
     fprintf(stderr, "%s\n", "Error is not expected!.");
     print_stack(3);
     assert(0);
@@ -92,7 +93,6 @@ void ArrayCheck(JSNIEnv* env, JSNICallbackInfo info) {
     AssertHelper(env);
   }
 
-
   {
     JSValueRef result = JSNIGetArrayElement(env, arg, 0);
     AssertHelper(env);
@@ -115,7 +115,6 @@ void ArrayCheck(JSNIEnv* env, JSNICallbackInfo info) {
     assert(result == 0);
     AssertHelper(env);
   }
-
 }
 
 void StringCheck(JSNIEnv* env, JSNICallbackInfo info) {
@@ -133,7 +132,6 @@ void StringCheck(JSNIEnv* env, JSNICallbackInfo info) {
     assert(result == 0);
     AssertHelper(env);
   }
-
 }
 
 void ObjectCheck(JSNIEnv* env, JSNICallbackInfo info) {
@@ -156,7 +154,6 @@ void ObjectCheck(JSNIEnv* env, JSNICallbackInfo info) {
     assert(!result);
     AssertHelper(env);
   }
-
 }
 
 
