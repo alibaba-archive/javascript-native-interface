@@ -54,8 +54,8 @@ static void JSNINativeLoad(JSNIEnv* env, JSNICallbackInfo info) {
     char errmsg[1024];
     snprintf(errmsg,
              sizeof(errmsg),
-             "Can not open native module: %s",
-             *filename);
+             "Can not open native module: %s. %s",
+             *filename, dlerror());
     JSNIThrowErrorException(env, errmsg);
     return;
   }
