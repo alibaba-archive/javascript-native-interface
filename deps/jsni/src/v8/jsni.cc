@@ -867,8 +867,7 @@ JSValueRef JSNINewTypedArray(JSNIEnv* env,
   Isolate* isolate = JSNI::GetIsolate(env);
   EscapableHandleScope scope(isolate);
   Local<ArrayBuffer> abuf =
-    ArrayBuffer::New(isolate, data, length,
-    ArrayBufferCreationMode::kInternalized);
+    ArrayBuffer::New(isolate, data, length);
   Local<Uint8Array> uarr = Uint8Array::New(abuf, 0, length);
   return reinterpret_cast<JSValueRef>(*(scope.Escape(uarr)));
 }

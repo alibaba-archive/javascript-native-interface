@@ -24,12 +24,8 @@
       'link_settings': {
         'libraries': [
           '-ldl',
-          '-lrt',
-          '-lgcov'
         ],
         },
-      "cflags" : ["-fprofile-arcs -ftest-coverage"],
-      "ldflags" : ["-lgcov --coverage"],
     },
   ],
 }

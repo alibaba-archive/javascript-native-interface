@@ -27,6 +27,7 @@
 #include <assert.h>
 #include <jsni.h>
 #include <string.h>
+#include <stdio.h>
 
 void testUtf8(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef value = JSNIGetArgOfCallback(env, info, 0);
@@ -37,9 +38,9 @@ void testUtf8(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef str_val = JSNINewStringFromUtf8(env, native_str, str_len);
   assert(JSNIGetStringUtf8Length(env, str_val) == str_len);
 
-  char get_str[str_len];
-  JSNIGetStringUtf8Chars(env, str_val, get_str, str_len);
-  for (size_t i = 0; i < str_len; i++) {
+  char get_str[str_len + 1];
+  JSNIGetStringUtf8Chars(env, str_val, get_str, str_len + 1);
+  for (size_t i = 0; i < str_len + 1; i++) {
     assert(get_str[i] == native_str[i]);
   }
 
