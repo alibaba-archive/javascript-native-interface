@@ -40,4 +40,6 @@ assert(typedArray[2] === 3);
 var arr = [];
 native.testIsArray(arr);
 
+native.testIsExternailized();
+
 process.exit();

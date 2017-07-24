@@ -29,6 +29,26 @@
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <v8.h>
+
+// Only for testing use.
+void RequestGC() {
+  v8::Isolate* isolate = v8::Isolate::GetCurrent();
+  isolate->RequestGarbageCollectionForTesting(
+    v8::Isolate::kFullGarbageCollection);
+}
+
+class External
+{
+ public:
+  External(int a) {
+    data = a;
+  }
+  ~External() {
+  }
+  int data;
+};
 
 void createTypedArray(JSNIEnv* env, JSNICallbackInfo info) {
   uint8_t a[] = {1, 2, 3};
@@ -56,8 +76,22 @@ void testIsArray(JSNIEnv* env, JSNICallbackInfo info) {
   assert(JSNIIsArray(env, check));
 }
 
+void testIsExternailized(JSNIEnv* env, JSNICallbackInfo info) {
+  External* ext = new External(123);
+  JSNIPushLocalScope(env);
+  JSValueRef js_typed_array =
+    JSNINewTypedArray(env, JsArrayTypeUint8,
+                      ext, sizeof ext);
+  JSNIPopLocalScope(env);
+  RequestGC();
+  RequestGC();
+  assert(ext->data == 123);
+  delete ext;
+}
+
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "createTypedArray", createTypedArray);
   JSNIRegisterMethod(env, exports, "testIsArray", testIsArray);
+  JSNIRegisterMethod(env, exports, "testIsExternailized", testIsExternailized);
   return JSNI_VERSION_2_0;
 }
