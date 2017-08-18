@@ -25,7 +25,6 @@
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "myobject.h"
-#include <stdio.h>
 
 JSValueRef MyObject::NewInstance(JSNIEnv* env, double counter) {
   MyObject* obj = new MyObject();
