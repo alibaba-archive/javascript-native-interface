@@ -24,47 +24,79 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+
+/** @defgroup jsni JavaScript Native Interface */
+
+/*! @addtogroup jsni
+ *   @{
+ */
+/** @file jsni.h */
+
 #ifndef INCLUDE_JSNI_H_
 #define INCLUDE_JSNI_H_
 
 // For size_t.
 #include <stddef.h>
 
-// JS type.
+/*! \typedef JSValueRef
+    \brief Reference type.
+*/
 typedef struct _JSValueRef* JSValueRef;
 
-// JSNI interface extended.
+/*! \typedef JSNIEnv
+    \brief JSNI enviroment.
+*/
 typedef struct _JSNIEnv JSNIEnv;
 
-// GCCallback helper types.
+/*! \typedef JSNIGCCallback
+    \brief GCCallback helper type.
+*/
 typedef void (*JSNIGCCallback)(JSNIEnv*, void*);
 
-// Callback helper types.
+/*! \typedef JSNICallbackInfo
+    \brief Callback helper type.
+*/
 typedef struct _JSNICallbackInfo* JSNICallbackInfo;
+
+/*! \typedef JSNICallback
+    \brief Callback helper type.
+*/
 typedef void (*JSNICallback)(JSNIEnv*, const JSNICallbackInfo);
+
+/*! \typedef JSGlobalValueRef
+    \brief Global reference type.
+*/
 typedef struct _JSGlobalValueRef* JSGlobalValueRef;
 
-// Type array.
+/*! \enum JsTypedArrayType
+    \brief The type of a typed JavaScript array.
+*/
 typedef enum {
+  /*! Do not have a type. */
   JsArrayTypeNone,
+  /*! An int8 array. */
   JsArrayTypeInt8,
+  /*! An uint8 array. */
   JsArrayTypeUint8,
-  /* JsArrayTypeUint8Clamped represents an array
-   of 8-bit unsigned integers clamped to 0-255.
-  **/
+  /*! An uint8 clamped array. JsArrayTypeUint8Clamped represents an array
+      of 8-bit unsigned integers clamped to 0-255.
+  */
   JsArrayTypeUint8Clamped,
+  /*! An int16 array. */
   JsArrayTypeInt16,
+  /*! An uint16 array. */
   JsArrayTypeUint16,
+  /*! An int32 array. */
   JsArrayTypeInt32,
+  /*! An uint32 array. */
   JsArrayTypeUint32,
+  /*! An float32 array. */
   JsArrayTypeFloat32,
+  /*! An float64 array. */
   JsArrayTypeFloat64
 } JsTypedArrayType;
 
-/* Types
-** Define types here.
-*/
-
+/*! \enum JSNIPropertyAttributes */
 typedef enum {
   JSNINone       = 0,
   JSNIReadOnly   = 1 << 0,
@@ -72,11 +104,13 @@ typedef enum {
   JSNIDontDelete = 1 << 2
 } JSNIPropertyAttributes;
 
+/*! \struct JSNIDataPropertyDescriptor */
 typedef struct {
   JSValueRef value;
   JSNIPropertyAttributes attributes;
 } JSNIDataPropertyDescriptor;
 
+/*! \struct JSNIAccessorPropertyDescriptor */
 typedef struct {
   JSNICallback getter;
   JSNICallback setter;
@@ -84,19 +118,22 @@ typedef struct {
   void* data;
 } JSNIAccessorPropertyDescriptor;
 
+/*! \struct JSNIPropertyDescriptor */
 typedef struct {
   JSNIDataPropertyDescriptor* data_attributes;
   JSNIAccessorPropertyDescriptor* accessor_attributes;
   // TODO(jiny) Maybe add void* data?
 } JSNIPropertyDescriptor;
 
+/*! \enum JSNIErrorCode */
 typedef enum {
-  // No error
+  /*! No error */
   JSNIOK,
-  // Generic error
+  /*! Generic error */
   JSNIERR
 } JSNIErrorCode;
 
+/*! \struct JSNIErrorInfo */
 typedef struct {
   const char* msg;
   JSNIErrorCode error_code;
@@ -110,613 +147,560 @@ extern "C" {
  * JSNI functions.
  */
 
-// \summary:
-//    Returns the version of the JSNI.
-// \param:
-//    None.
-// \returns:
-//    Returns the version of the JSNI.
+
+/*! \fn int JSNIGetVersion(JSNIEnv* env)
+    \brief Returns the version of the JSNI.
+    \param env The JSNI enviroment pointer.
+    \return Returns the version of the JSNI.
+*/
 int JSNIGetVersion(JSNIEnv* env);
 
-// \summary:
-//    Registers a native callback function.
-// \param:
-//    recv: the method receiver. It is passed through JSNIInit to receive the
-//          registered JS function associated with the callback.
-//    name: a function name.
-//    callback: a native callback function to be registered.
-// \returns:
-//    Returns true on success.
-bool JSNIRegisterMethod(JSNIEnv* env,
-                        const JSValueRef recv,
-                        const char* name,
-                        JSNICallback callback);
-// \summary:
-//    Returns the number of arguments for the callback.
-// \param:
-//    info: the callback info.
-// \returns:
-//    Returns the number of arguments.
+/*! \fn bool JSNIRegisterMethod(JSNIEnv* env, const JSValueRef recv, const char* name, JSNICallback callback)
+    \brief Registers a native callback function.
+    \param env The JSNI enviroment pointer. registered JS function associated with the callback.
+    \param recv The method receiver. It is passed through JSNIInit to receive the
+    \param name A function name.
+    \param callback A native callback function to be registered.
+    \return Returns true on success.
+*/
+bool JSNIRegisterMethod(JSNIEnv* env, const JSValueRef recv, const char* name, JSNICallback callback);
+
+/*! \fn int JSNIGetArgsLengthOfCallback(JSNIEnv* env, JSNICallbackInfo info)
+    \brief Returns the number of arguments for the callback.
+    \param env The JSNI enviroment pointer.
+    \param info The callback info.
+    \return Returns the number of arguments.
+*/
 int JSNIGetArgsLengthOfCallback(JSNIEnv* env, JSNICallbackInfo info);
 
-// \summary:
-//    Returns the argument for the callback.
-// \param:
-//    info: the callback info.
-//    id: the index of arguments.
-// \returns:
-//    Returns the argument.
+/*! \fn JSValueRef JSNIGetArgOfCallback(JSNIEnv* env, JSNICallbackInfo info, int id)
+    \brief Returns the argument for the callback.
+    \param env The JSNI enviroment pointer.
+    \param info The callback info.
+    \param id The index of arguments.
+    \return Returns the argument.
+*/
 JSValueRef JSNIGetArgOfCallback(JSNIEnv* env, JSNICallbackInfo info, int id);
 
-// \summary:
-//    Returns "this" JavaScript object of the JavaScript function
-//    which current callback associated with.
-// \param:
-//    info: the callback info.
-// \returns:
-//    Returns "this" JavaScript object..
+/*! \fn JSValueRef JSNIGetThisOfCallback(JSNIEnv* env, JSNICallbackInfo info)
+    \brief Returns "this" JavaScript object of the JavaScript function
+which current callback associated with.
+    \param env The JSNI enviroment pointer.
+    \param info The callback info.
+    \return Returns "this" JavaScript object..
+*/
 JSValueRef JSNIGetThisOfCallback(JSNIEnv* env, JSNICallbackInfo info);
 
-// \summary:
-//    Get the raw data which is passed to this callback.
-// \param:
-//    info: the callback info.
-// \returns:
-//    Returns the data.
+/*! \fn void* JSNIGetDataOfCallback(JSNIEnv* env, JSNICallbackInfo info)
+    \brief Get the raw data which is passed to this callback.
+    \param env The JSNI enviroment pointer.
+    \param info The callback info.
+    \return Returns the data.
+*/
 void* JSNIGetDataOfCallback(JSNIEnv* env, JSNICallbackInfo info);
 
-// \summary:
-//    Sets the JavaScript return value for the callback.
-// \param:
-//    info: the callback info.
-//    val: the JavaScript value to return to JavaScript.
-// \returns:
-//    None.
-void JSNISetReturnValue(JSNIEnv* env,
-                                  JSNICallbackInfo info,
-                                  JSValueRef val);
+/*! \fn void JSNISetReturnValue(JSNIEnv* env, JSNICallbackInfo info, JSValueRef val)
+    \brief Sets the JavaScript return value for the callback.
+    \param env The JSNI enviroment pointer.
+    \param info The callback info.
+    \param val The JavaScript value to return to JavaScript.
+    \return None.
+*/
+void JSNISetReturnValue(JSNIEnv* env, JSNICallbackInfo info, JSValueRef val);
 
-// Primitive Operations
-
-// \summary:
-//    Tests whether the JavaScript value is undefined.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if the value is undefined.
+/*! \fn bool JSNIIsUndefined(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether the JavaScript value is undefined.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if the value is undefined.
+*/
 bool JSNIIsUndefined(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a new Undefined JavaScript value.
-// \param:
-//    None.
-// \returns:
-//    Returns an Undefined JavaScript value.
+/*! \fn JSValueRef JSNINewUndefined(JSNIEnv* env)
+    \brief Constructs a new Undefined JavaScript value.
+    \param env The JSNI enviroment pointer.
+    \return Returns an Undefined JavaScript value.
+*/
 JSValueRef JSNINewUndefined(JSNIEnv* env);
 
-// \summary:
-//    Tests whether the JavaScript value is Null.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if the value is Null.
+/*! \fn bool JSNIIsNull(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether the JavaScript value is Null.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if the value is Null.
+*/
 bool JSNIIsNull(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a new Null JavaScript value.
-// \param:
-//    None.
-// \returns:
-//    Returns a Null JavaScript value.
+/*! \fn JSValueRef JSNINewNull(JSNIEnv* env)
+    \brief Constructs a new Null JavaScript value.
+    \param env The JSNI enviroment pointer.
+    \return Returns a Null JavaScript value.
+*/
 JSValueRef JSNINewNull(JSNIEnv* env);
 
-
-// \summary:
-//    Tests whether the JavaScript value is Boolean.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if the value is Boolean.
+/*! \fn bool JSNIIsBoolean(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether the JavaScript value is Boolean.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if the value is Boolean.
+*/
 bool JSNIIsBoolean(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Converts the JavaScript value to C bool.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns the C bool value.
+/*! \fn bool JSNIToCBool(JSNIEnv* env, JSValueRef val)
+    \brief Converts the JavaScript value to C bool.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns the C bool value.
+*/
 bool JSNIToCBool(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a new Boolean JavaScript value.
-// \param:
-//    val: a bool value.
-// \returns:
-//    Returns a Boolean JavaScript value.
+/*! \fn JSValueRef JSNINewBoolean(JSNIEnv* env, bool val)
+    \brief Constructs a new Boolean JavaScript value.
+    \param env The JSNI enviroment pointer.
+    \param val A bool value.
+    \return Returns a Boolean JavaScript value.
+*/
 JSValueRef JSNINewBoolean(JSNIEnv* env, bool val);
 
-// \summary:
-//    Tests whether the JavaScript value is Number.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if the value is Number.
+/*! \fn bool JSNIIsNumber(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether the JavaScript value is Number.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if the value is Number.
+*/
 bool JSNIIsNumber(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a new Number JavaScript value.
-// \param:
-//    val: a double value.
-// \returns:
-//    Returns a Number JavaScript value.
+/*! \fn JSValueRef JSNINewNumber(JSNIEnv* env, double val)
+    \brief Constructs a new Number JavaScript value.
+    \param env The JSNI enviroment pointer.
+    \param val A double value.
+    \return Returns a Number JavaScript value.
+*/
 JSValueRef JSNINewNumber(JSNIEnv* env, double val);
 
-// \summary:
-//    Converts the JavaScript value to C double.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns the C double value.
+/*! \fn double JSNIToCDouble(JSNIEnv* env, JSValueRef val)
+    \brief Converts the JavaScript value to C double.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns the C double value.
+*/
 double JSNIToCDouble(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Tests whether the JavaScript value is Symbol.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if the value is Symbol.
+/*! \fn bool JSNIIsSymbol(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether the JavaScript value is Symbol.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if the value is Symbol.
+*/
 bool JSNIIsSymbol(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a new Symbol JavaScript value
-// \param:
-//    val: the description of the symbol.
-// \returns:
-//    Returns a Symbol JavaScript value.
+/*! \fn JSValueRef JSNINewSymbol(JSNIEnv* env, JSValueRef val)
+    \brief Constructs a new Symbol JavaScript value
+    \param env The JSNI enviroment pointer.
+    \param val The description of the symbol.
+    \return Returns a Symbol JavaScript value.
+*/
 JSValueRef JSNINewSymbol(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Tests whether the JavaScript value is String.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if the value is String.
+/*! \fn bool JSNIIsString(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether the JavaScript value is String.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if the value is String.
+*/
 bool JSNIIsString(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a new String value from an array of characters
-//    in UTF-8 encoding.
-// \param:
-//    src: the pointer to a UTF-8 string.
-// \returns:
-//    Returns a String value, or NULL if the string can not be constructed.
+/*! \fn JSValueRef JSNINewStringFromUtf8(JSNIEnv* env, const char* src, size_t length)
+    \brief Constructs a new String value from an array of characters
+in UTF-8 encoding.
+    \param env The JSNI enviroment pointer.
+    \param src The pointer to a UTF-8 string.
+    \return Returns a String value, or NULL if the string can not be constructed.
+*/
 JSValueRef JSNINewStringFromUtf8(JSNIEnv* env, const char* src, size_t length);
 
-// \summary:
-//    Returns the length in bytes of the UTF-8 representation of a string.
-// \param:
-//    string: a JavaScript string value.
-// \returns:
-//    Returns the UTF-8 length of the string.
+/*! \fn size_t JSNIGetStringUtf8Length(JSNIEnv* env, JSValueRef string)
+    \brief Returns the length in bytes of the UTF-8 representation of a string.
+    \param env The JSNI enviroment pointer.
+    \param string A JavaScript string value.
+    \return Returns the UTF-8 length of the string.
+*/
 size_t JSNIGetStringUtf8Length(JSNIEnv* env, JSValueRef string);
 
-// \summary:
-//    Copyies a JavaScript string into a UTF-8 encoding string buffer.
-// \param:
-//    string: a JavaScript string value.
-//    copy: the buffer copied to.
-// \returns:
-//    Returns the size of copied.
-size_t JSNIGetStringUtf8Chars(JSNIEnv* env,
-                              JSValueRef string,
-                              char* copy,
-                              size_t length);
+/*! \fn size_t JSNIGetStringUtf8Chars(JSNIEnv* env, JSValueRef string, char* copy, size_t length)
+    \brief Copyies a JavaScript string into a UTF-8 encoding string buffer.
+    \param env The JSNI enviroment pointer.
+    \param string A JavaScript string value.
+    \param copy The buffer copied to.
+    \return Returns the size of copied.
+*/
+size_t JSNIGetStringUtf8Chars(JSNIEnv* env, JSValueRef string, char* copy, size_t length);
 
-// Object Operations
-
-// \summary:
-//    Tests whether a JavaScript value is a JavaScript object.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if val is a JavaScript object.
+/*! \fn bool JSNIIsObject(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether a JavaScript value is a JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if val is a JavaScript object.
+*/
 bool JSNIIsObject(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Tests whether a JavaScript value is empty.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if val is empty.
+/*! \fn bool JSNIIsEmpty(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether a JavaScript value is empty.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if val is empty.
+*/
 bool JSNIIsEmpty(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a JavaScript object.
-// \param:
-//    None.
-// \returns:
-//    Returns a JavaScript object.
+/*! \fn JSValueRef JSNINewObject(JSNIEnv* env)
+    \brief Constructs a JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \return Returns a JavaScript object.
+*/
 JSValueRef JSNINewObject(JSNIEnv* env);
 
-// \summary:
-//    Tests whether a JavaScript object has a property named name.
-// \param:
-//    object: a JavaScript object.
-//    name: a property name.
-// \returns:
-//    Returns true if object has property named name.
+/*! \fn bool JSNIHasProperty(JSNIEnv* env, JSValueRef object, const char* name)
+    \brief Tests whether a JavaScript object has a property named name.
+    \param env The JSNI enviroment pointer.
+    \param object A JavaScript object.
+    \param name A property name.
+    \return Returns true if object has property named name.
+*/
 bool JSNIHasProperty(JSNIEnv* env, JSValueRef object, const char* name);
 
-// \summary:
-//    Returns the property of the JavaScript object.
-// \param:
-//    object: a JavaScript object.
-//    name: a property name.
-// \returns:
-//    Returns the property of the JavaScript object.
+/*! \fn JSValueRef JSNIGetProperty(JSNIEnv* env, JSValueRef object, const char* name)
+    \brief Returns the property of the JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \param object A JavaScript object.
+    \param name A property name.
+    \return Returns the property of the JavaScript object.
+*/
 JSValueRef JSNIGetProperty(JSNIEnv* env, JSValueRef object, const char* name);
 
-// \summary:
-//    Sets a property of a JavaScript object.
-// \param:
-//    object: a JavaScript object.
-//    name: a property name.
-//    property: a JavaScript value.
-// \returns:
-//    Returns true if the operation succeeds.
-bool JSNISetProperty(JSNIEnv* env,
-                     JSValueRef object,
-                     const char* name,
-                     JSValueRef property);
+/*! \fn bool JSNISetProperty(JSNIEnv* env, JSValueRef object, const char* name, JSValueRef property)
+    \brief Sets a property of a JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \param object A JavaScript object.
+    \param name A property name.
+    \param property A JavaScript value.
+    \return Returns true if the operation succeeds.
+*/
+bool JSNISetProperty(JSNIEnv* env, JSValueRef object, const char* name, JSValueRef property);
 
-// \summary:
-//    Defines a new property directly on an object, or modifies
-//    an existing property on an object.
-// \param:
-//    object: the object on which to define the property.
-//    name: the name of the property to be defined or modified.
-//    descriptor: the descriptor for the property being defined or modified.
-// \returns:
-//    Returns true on success.
-bool JSNIDefineProperty(JSNIEnv* env,
-                        JSValueRef object,
-                        const char* name,
-                        const JSNIPropertyDescriptor descriptor);
+/*! \fn bool JSNIDefineProperty(JSNIEnv* env, JSValueRef object, const char* name, const JSNIPropertyDescriptor descriptor)
+    \brief Defines a new property directly on an object, or modifies
+an existing property on an object.
+    \param env The JSNI enviroment pointer.
+    \param object The object on which to define the property.
+    \param name The name of the property to be defined or modified.
+    \param descriptor The descriptor for the property being defined or modified.
+    \return Returns true on success.
+*/
+bool JSNIDefineProperty(JSNIEnv* env, JSValueRef object, const char* name, const JSNIPropertyDescriptor descriptor);
 
-// \summary:
-//    Deletes the property of a JavaScript object.
-// \param:
-//    object: a JavaScript object.
-//    name: a property name.
-// \returns:
-//    Returns true if the operation succeeds.
+/*! \fn bool JSNIDeleteProperty(JSNIEnv* env, JSValueRef object, const char* name)
+    \brief Deletes the property of a JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \param object A JavaScript object.
+    \param name A property name.
+    \return Returns true if the operation succeeds.
+*/
 bool JSNIDeleteProperty(JSNIEnv* env, JSValueRef object, const char* name);
 
-// \summary:
-//    Returns a prototype of a JavaScript object.
-// \param:
-//    object: a JavaScript object.
-// \returns:
-//    Returns a JavaScript value.
+/*! \fn JSValueRef JSNIGetPrototype(JSNIEnv* env, JSValueRef object)
+    \brief Returns a prototype of a JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \param object A JavaScript object.
+    \return Returns a JavaScript value.
+*/
 JSValueRef JSNIGetPrototype(JSNIEnv* env, JSValueRef object);
 
-// \summary:
-//    Constructs a JavaScript object with internal field.
-//    Internal field is a raw C pointer which can not be
-//    get in JavaScript.
-// \param:
-//    count: a number of internal fields.
-// \returns:
-//    Returns a JavaScript object.
+/*! \fn JSValueRef JSNINewObjectWithInternalField(JSNIEnv* env, int count)
+    \brief Constructs a JavaScript object with internal field.
+Internal field is a raw C pointer which can not be
+get in JavaScript.
+    \param env The JSNI enviroment pointer.
+    \param count A number of internal fields.
+    \return Returns a JavaScript object.
+*/
 JSValueRef JSNINewObjectWithInternalField(JSNIEnv* env, int count);
 
-// \summary:
-//    Gets the number of the internal field fo a JavaScript object.
-// \param:
-//    object: a JavaScript object.
-// \returns:
-//    Returns the number of the internal internal field.
+/*! \fn int JSNIInternalFieldCount(JSNIEnv* env, JSValueRef object)
+    \brief Gets the number of the internal field fo a JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \param object A JavaScript object.
+    \return Returns the number of the internal internal field.
+*/
 int JSNIInternalFieldCount(JSNIEnv* env, JSValueRef object);
 
-// \summary:
-//    Sets an internal field of a JavaScript object.
-// \param:
-//    object: a JavaScript object.
-//    index: index of an internal field.
-//    field: an internal field. This is a raw C pointer,
-//           and it will not be freed when object is Garbage Collected.
-// \returns:
-//    None.
-void JSNISetInternalField(JSNIEnv* env,
-                          JSValueRef object,
-                          int index,
-                          void* field);
+/*! \fn void JSNISetInternalField(JSNIEnv* env, JSValueRef object, int index, void* field)
+    \brief Sets an internal field of a JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \param object A JavaScript object.
+    \param index Index of an internal field. and it will not be freed when object is Garbage Collected.
+    \param field An internal field. This is a raw C pointer,
+    \return None.
+*/
+void JSNISetInternalField(JSNIEnv* env, JSValueRef object, int index, void* field);
 
-// \summary:
-//    Gets an internal field of a JavaScript object.
-// \param:
-//    object: a JavaScript object.
-//    index: index of an internal field.
-// \returns:
-//    an internal field.
+/*! \fn void* JSNIGetInternalField(JSNIEnv* env, JSValueRef object, int index)
+    \brief Gets an internal field of a JavaScript object.
+    \param env The JSNI enviroment pointer.
+    \param object A JavaScript object.
+    \param index Index of an internal field.
+    \return an internal field.
+*/
 void* JSNIGetInternalField(JSNIEnv* env, JSValueRef object, int index);
 
-// \summary:
-//    Tests whether a JavaScript value is Function.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if val is Function.
+/*! \fn bool JSNIIsFunction(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether a JavaScript value is Function.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if val is Function.
+*/
 bool JSNIIsFunction(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a JavaScript function with callback.
-// \param:
-//    callback: a native callback function.
-// \returns:
-//    Returns a JavaScript function.
+/*! \fn JSValueRef JSNINewFunction(JSNIEnv* env, JSNICallback callback)
+    \brief Constructs a JavaScript function with callback.
+    \param env The JSNI enviroment pointer.
+    \param callback A native callback function.
+    \return Returns a JavaScript function.
+*/
 JSValueRef JSNINewFunction(JSNIEnv* env, JSNICallback callback);
 
-// \summary:
-//    Calls a JavaScript function.
-// \param:
-//    func: a JavaScript funciton.
-//    recv: the receiver the func belongs to.
-//    argc: the arguments number.
-//    argv: a pointer to an array of JavaScript value.
-// \returns:
-//    Returns the JavaScript value returned from calling func.
-JSValueRef JSNICallFunction(JSNIEnv* env,
-                            JSValueRef func,
-                            JSValueRef recv,
-                            int argc,
-                            JSValueRef* argv);
+/*! \fn JSValueRef JSNICallFunction(JSNIEnv* env, JSValueRef func, JSValueRef recv, int argc, JSValueRef* argv)
+    \brief Calls a JavaScript function.
+    \param env The JSNI enviroment pointer.
+    \param func A JavaScript funciton.
+    \param recv The receiver the func belongs to.
+    \param argc The arguments number.
+    \param argv A pointer to an array of JavaScript value.
+    \return Returns the JavaScript value returned from calling func.
+*/
+JSValueRef JSNICallFunction(JSNIEnv* env, JSValueRef func, JSValueRef recv, int argc, JSValueRef* argv);
 
-
-// \summary:
-//    Tests whether a JavaScript value is Array.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if val is Array.
+/*! \fn bool JSNIIsArray(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether a JavaScript value is Array.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if val is Array.
+*/
 bool JSNIIsArray(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Returns the number of elements in the array.
-// \param:
-//    array: a JavaScript array.
-// \returns:
-//    Returns the length of the array.
+/*! \fn size_t JSNIGetArrayLength(JSNIEnv* env, JSValueRef array)
+    \brief Returns the number of elements in the array.
+    \param env The JSNI enviroment pointer.
+    \param array A JavaScript array.
+    \return Returns the length of the array.
+*/
 size_t JSNIGetArrayLength(JSNIEnv* env, JSValueRef array);
 
-// \summary:
-//    Constructs a JavaScript array with initial length: initial_length.
-// \param:
-//    initial_length: initial array size.
-// \returns:
-//    Returns a JavaScript array object, or NULL if the operation fails.
+/*! \fn JSValueRef JSNINewArray(JSNIEnv* env, size_t initial_length)
+    \brief Constructs a JavaScript array with initial length: initial_length.
+    \param env The JSNI enviroment pointer.
+    \param initial_length Initial array size.
+    \return Returns a JavaScript array object, or NULL if the operation fails.
+*/
 JSValueRef JSNINewArray(JSNIEnv* env, size_t initial_length);
 
-// \summary:
-//    Returns an element of a JavaScript array.
-// \param:
-//    array: a JavaScript array.
-//    index: array index.
-// \returns:
-//    Returns a JavaScript value.
+/*! \fn JSValueRef JSNIGetArrayElement(JSNIEnv* env, JSValueRef array, size_t index)
+    \brief Returns an element of a JavaScript array.
+    \param env The JSNI enviroment pointer.
+    \param array A JavaScript array.
+    \param index Array index.
+    \return Returns a JavaScript value.
+*/
 JSValueRef JSNIGetArrayElement(JSNIEnv* env, JSValueRef array, size_t index);
 
-// \summary:
-//    Sets an element of a JavaScript array.
-// \param:
-//    array: a JavaScript array.
-//    index: a array index.
-//    value: a new value.
-// \returns:
-//    None.
-void JSNISetArrayElement(JSNIEnv* env,
-                         JSValueRef array,
-                         size_t index,
-                         JSValueRef value);
+/*! \fn void JSNISetArrayElement(JSNIEnv* env, JSValueRef array, size_t index, JSValueRef value)
+    \brief Sets an element of a JavaScript array.
+    \param env The JSNI enviroment pointer.
+    \param array A JavaScript array.
+    \param index A array index.
+    \param value A new value.
+    \return None.
+*/
+void JSNISetArrayElement(JSNIEnv* env, JSValueRef array, size_t index, JSValueRef value);
 
-// \summary:
-//    Tests whether a JavaScript value is TypedArray.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns true if val is TypedArray.
+/*! \fn bool JSNIIsTypedArray(JSNIEnv* env, JSValueRef val)
+    \brief Tests whether a JavaScript value is TypedArray.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns true if val is TypedArray.
+*/
 bool JSNIIsTypedArray(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Constructs a JavaScript TypedArray object.
-// \param:
-//    type: the type of the array.
-//    data: the pointer to the data buffer of the array.
-//    length: the length of the array.
-// \returns:
-//    Returns a JavaScript TypedArray object.
-JSValueRef JSNINewTypedArray(JSNIEnv*,
-                             JsTypedArrayType type,
-                             void* data,
-                             size_t length);
+/*! \fn JSValueRef JSNINewTypedArray(JSNIEnv* env, JsTypedArrayType type, void* data, size_t length)
+    \brief Constructs a JavaScript TypedArray object.
+    \param env The JSNI enviroment pointer.
+    \param type The type of the array.
+    \param data The pointer to the data buffer of the array.
+    \param length The length of the array.
+    \return Returns a JavaScript TypedArray object.
+*/
+JSValueRef JSNINewTypedArray(JSNIEnv* env, JsTypedArrayType type, void* data, size_t length);
 
-// \summary:
-//    Returns the type of the JavaScript TypedArray value.
-// \param:
-//    typed_array: a JavaScript TypedArray value.
-// \returns:
-//    Returns the type of the JavaScript TypedArray value.
+/*! \fn JsTypedArrayType JSNIGetTypedArrayType(JSNIEnv* env, JSValueRef typed_array)
+    \brief Returns the type of the JavaScript TypedArray value.
+    \param env The JSNI enviroment pointer.
+    \param typed_array A JavaScript TypedArray value.
+    \return Returns the type of the JavaScript TypedArray value.
+*/
 JsTypedArrayType JSNIGetTypedArrayType(JSNIEnv* env, JSValueRef typed_array);
 
-// \summary:
-//    Returns the pointer to the buffer of TypedArray data.
-// \param:
-//    typed_array: a JavaScript TypedArray value.
-// \returns:
-//    Returns the pointer to the buffer of TypedArray data.
+/*! \fn void* JSNIGetTypedArrayData(JSNIEnv* env, JSValueRef typed_array)
+    \brief Returns the pointer to the buffer of TypedArray data.
+    \param env The JSNI enviroment pointer.
+    \param typed_array A JavaScript TypedArray value.
+    \return Returns the pointer to the buffer of TypedArray data.
+*/
 void* JSNIGetTypedArrayData(JSNIEnv* env, JSValueRef typed_array);
 
-// \summary:
-//    Returns the number of elements in the TypedArray value.
-// \param:
-//    typed_array: a JavaScript TypedArray value.
-// \returns:
-//    Returns the length of the TypedArray value.
+/*! \fn size_t JSNIGetTypedArrayLength(JSNIEnv* env, JSValueRef typed_array)
+    \brief Returns the number of elements in the TypedArray value.
+    \param env The JSNI enviroment pointer.
+    \param typed_array A JavaScript TypedArray value.
+    \return Returns the length of the TypedArray value.
+*/
 size_t JSNIGetTypedArrayLength(JSNIEnv* env, JSValueRef typed_array);
 
-// Reference
-
-// \summary:
-//    Creates a local reference scope, and then all local references will
-//    be allocated within this reference scope until the reference scope
-//    is deleted using PoplocalScope() or another local reference scope
-//    is created.
-// \param:
-//    None.
-// \returns:
-//    None.
+/*! \fn void JSNIPushLocalScope(JSNIEnv* env)
+    \brief Creates a local reference scope, and then all local references will
+be allocated within this reference scope until the reference scope
+is deleted using PoplocalScope() or another local reference scope
+is created.
+    \param env The JSNI enviroment pointer.
+    \return None.
+*/
 void JSNIPushLocalScope(JSNIEnv* env);
 
-// \summary:
-//    Pops off the current local reference scope, frees all the local
-//    references in the local reference scope.
-// \param:
-//    None.
-// \returns:
-//    None.
+/*! \fn void JSNIPopLocalScope(JSNIEnv* env)
+    \brief Pops off the current local reference scope, frees all the local
+references in the local reference scope.
+    \param env The JSNI enviroment pointer.
+    \return None.
+*/
 void JSNIPopLocalScope(JSNIEnv* env);
 
-// \summary:
-//    Creates a local reference scope, and then all local references will
-//    be allocated within this reference scope until the reference scope
-//    is deleted using PopEscapableLocalScope() or another local reference scope
-//    is created.
-// \param:
-//    None.
-// \returns:
-//    None.
+/*! \fn void JSNIPushEscapableLocalScope(JSNIEnv* env)
+    \brief Creates a local reference scope, and then all local references will
+be allocated within this reference scope until the reference scope
+is deleted using PopEscapableLocalScope() or another local reference scope
+is created.
+    \param env The JSNI enviroment pointer.
+    \return None.
+*/
 void JSNIPushEscapableLocalScope(JSNIEnv* env);
 
-// \summary:
-//    Pops off the current local reference scope, frees all the local
-//    references in the local reference scope, and returns a local reference
-//    in the previous local scope for the given val JavaScript value.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns a JavaScript value.
+/*! \fn JSValueRef JSNIPopEscapableLocalScope(JSNIEnv* env, JSValueRef val)
+    \brief Pops off the current local reference scope, frees all the local
+references in the local reference scope, and returns a local reference
+in the previous local scope for the given val JavaScript value.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns a JavaScript value.
+*/
 JSValueRef JSNIPopEscapableLocalScope(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Creates a new global reference to the JavaScript value referred to by
-//    the val argument. The global value must be explicitly disposed of by
-//    calling DeleteGlobalValue(), except that the global value is set
-//    by calling SetGCCallback(). The global value will be alive
-//    untile calling DeleteGlobalValue() to dispose it.
-// \param:
-//    val: a JavaScript value.
-// \returns:
-//    Returns a global value.
+/*! \fn JSGlobalValueRef JSNINewGlobalValue(JSNIEnv* env, JSValueRef val)
+    \brief Creates a new global reference to the JavaScript value referred to by
+the val argument. The global value must be explicitly disposed of by
+calling DeleteGlobalValue(), except that the global value is set
+by calling SetGCCallback(). The global value will be alive
+untile calling DeleteGlobalValue() to dispose it.
+    \param env The JSNI enviroment pointer.
+    \param val A JavaScript value.
+    \return Returns a global value.
+*/
 JSGlobalValueRef JSNINewGlobalValue(JSNIEnv* env, JSValueRef val);
 
-// \summary:
-//    Deletes the global reference pointed by val.
-// \param:
-//    val: a JSGlobalValueRef value.
-// \returns:
-//    None.
+/*! \fn void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val)
+    \brief Deletes the global reference pointed by val.
+    \param env The JSNI enviroment pointer.
+    \param val A JSGlobalValueRef value.
+    \return None.
+*/
 void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val);
 
-// \summary:
-//    Returns a local JSValueRef value from a JSGlobalValueRef value.
-// \param:
-//    val: a JSGlobalValueRef value.
-// \returns:
-//    Returns a local JSValueRef value.
+/*! \fn JSValueRef JSNIGetGlobalValue(JSNIEnv* env, JSGlobalValueRef val)
+    \brief Returns a local JSValueRef value from a JSGlobalValueRef value.
+    \param env The JSNI enviroment pointer.
+    \param val A JSGlobalValueRef value.
+    \return Returns a local JSValueRef value.
+*/
 JSValueRef JSNIGetGlobalValue(JSNIEnv* env, JSGlobalValueRef val);
 
-// \summary:
-//    Sets a callback which will be called
-//    when the JavaScript value pointed by val is freed.
-//    The developer can pass an argument to callback by args.
-// \param:
-//    val: a JSGlobalValueRef value.
-//    args: a pointer to an argument passed to callback.
-//    callback: a function callback.
-// \returns:
-//    None.
-void JSNISetGCCallback(JSNIEnv* env,
-                       JSGlobalValueRef val,
-                       void* args,
-                       JSNIGCCallback callback);
+/*! \fn void JSNISetGCCallback(JSNIEnv* env, JSGlobalValueRef val, void* args, JSNIGCCallback callback)
+    \brief Sets a callback which will be called
+when the JavaScript value pointed by val is freed.
+The developer can pass an argument to callback by args.
+    \param env The JSNI enviroment pointer.
+    \param val A JSGlobalValueRef value.
+    \param args A pointer to an argument passed to callback.
+    \param callback A function callback.
+    \return None.
+*/
+void JSNISetGCCallback(JSNIEnv* env, JSGlobalValueRef val, void* args, JSNIGCCallback callback);
 
-// Exception
-
-// \summary:
-//    Constructs an error object with the message specified by errmsg
-//    and causes that error to be thrown. It throws a JavaScript Exception.
-// \param:
-//    errmsg: an error message.
-// \returns:
-//    None.
+/*! \fn void JSNIThrowErrorException(JSNIEnv* env, const char* errmsg)
+    \brief Constructs an error object with the message specified by errmsg
+and causes that error to be thrown. It throws a JavaScript Exception.
+    \param env The JSNI enviroment pointer.
+    \param errmsg An error message.
+    \return None.
+*/
 void JSNIThrowErrorException(JSNIEnv* env, const char* errmsg);
 
-// \summary:
-//    Constructs an type error object with the message specified by errmsg
-//    and causes that type error to be thrown. It throws a JavaScript Exception.
-// \param:
-//    errmsg: an error message.
-// \returns:
-//    None.
+/*! \fn void JSNIThrowTypeErrorException(JSNIEnv* env, const char* errmsg)
+    \brief Constructs an type error object with the message specified by errmsg
+and causes that type error to be thrown. It throws a JavaScript Exception.
+    \param env The JSNI enviroment pointer.
+    \param errmsg An error message.
+    \return None.
+*/
 void JSNIThrowTypeErrorException(JSNIEnv* env, const char* errmsg);
 
-// \summary:
-//    Constructs an range error object with the message specified by errmsg
-//    and causes that type error to be thrown. It throws a JavaScript Exception.
-// \param:
-//    errmsg: an error message.
-// \returns:
-//    None.
+/*! \fn void JSNIThrowRangeErrorException(JSNIEnv* env, const char* errmsg)
+    \brief Constructs an range error object with the message specified by errmsg
+and causes that type error to be thrown. It throws a JavaScript Exception.
+    \param env The JSNI enviroment pointer.
+    \param errmsg An error message.
+    \return None.
+*/
 void JSNIThrowRangeErrorException(JSNIEnv* env, const char* errmsg);
 
-// \summary:
-//    Tests whether there is error occured during pervious JSNI call. After
-//    calling JSNIGetLastErrorInfo(), if there is error occured, the error
-//    will be cleared.
-// \param:
-//    None.
-// \returns:
-//    Returns true if there is error occured during previous JSNI call.
+/*! \fn JSNIErrorInfo JSNIGetLastErrorInfo(JSNIEnv* env)
+    \brief Tests whether there is error occured during pervious JSNI call. After
+calling JSNIGetLastErrorInfo(), if there is error occured, the error
+will be cleared.
+    \param env The JSNI enviroment pointer.
+    \return Returns true if there is error occured during previous JSNI call.
+*/
 JSNIErrorInfo JSNIGetLastErrorInfo(JSNIEnv* env);
 
-// \summary:
-//    Tests whether a JavaScript exception is being thrown.
-//    It's different with error get from JSNIGetLastErrorInfo.
-//    Eorror is defined by JSNI, whereas this is a JavaScript exception.
-// \param:
-//    None.
-// \returns:
-//    Returns true if a JavaScript exception is being thrown.
+/*! \fn bool JSNIHasException(JSNIEnv* env)
+    \brief Tests whether a JavaScript exception is being thrown.
+It's different with error get from JSNIGetLastErrorInfo.
+Eorror is defined by JSNI, whereas this is a JavaScript exception.
+    \param env The JSNI enviroment pointer.
+    \return Returns true if a JavaScript exception is being thrown.
+*/
 bool JSNIHasException(JSNIEnv* env);
 
-// \summary:
-//    Clear a JavaScript exception that is being thrown. If there
-//    is no exception, this routine has no effect.
-// \param:
-//    None.
-// \returns:
-//    None.
+/*! \fn void JSNIClearException(JSNIEnv* env)
+    \brief Clear a JavaScript exception that is being thrown. If there
+is no exception, this routine has no effect.
+    \param env The JSNI enviroment pointer.
+    \return None.
+*/
 void JSNIClearException(JSNIEnv* env);
 
 #if defined(__cplusplus)
 }
 #endif
 
-/*
- * Extended jsni_env which contains functions table pointer.
- */
+
 struct _JSNIEnv {
-  // No specific thing here.
   void* reserved;
 };
 
@@ -728,14 +712,15 @@ struct _JSNIEnv {
 #if defined(__cplusplus)
 extern "C" {
 #endif
-/*
- * This function is called by JSNI, not part of JSNI.
- */
+/*! \fn int JSNIInit(JSNIEnv* env, JSValueRef exports)
+    \brief This function is called by JSNI, not part of JSNI.
+*/
 int JSNIInit(JSNIEnv* env, JSValueRef exports);
 
 #if defined(__cplusplus)
 }
 #endif
 
-
 #endif  // INCLUDE_JSNI_H_
+
+/*! @} */
