@@ -28,7 +28,7 @@ var assert = require("assert");
 const native = nativeLoad("native");
 assert(native.testGlobal() === 100);
 native.testGlobalGC();
-native.testGlobalWeakCallback();
 native.testGCCallback();
+native.testAcquireRelease();
 
 process.exit();

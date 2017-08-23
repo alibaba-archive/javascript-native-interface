@@ -68,11 +68,11 @@ static void JSNINativeLoad(JSNIEnv* env, JSNICallbackInfo info) {
   if (ptr != nullptr) {
     JSNIInitFn jsni_init = reinterpret_cast<JSNIInitFn>(ptr);
     int version = jsni_init(env, exports);
-    if (version != JSNI_VERSION_2_0) {
+    if (version < JSNI_VERSION_2_0) {
       char errmsg[1024];
       snprintf(errmsg,
                sizeof(errmsg),
-               "Native module version mismatch. Expected %d, got %d.",
+               "Native module version mismatch. Expected >= %d, got %d.",
                JSNI_VERSION_2_0, version);
       dlclose(handle);
       JSNIThrowErrorException(env, errmsg);

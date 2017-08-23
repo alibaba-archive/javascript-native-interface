@@ -605,9 +605,10 @@ JSValueRef JSNIPopEscapableLocalScope(JSNIEnv* env, JSValueRef val);
 /*! \fn JSGlobalValueRef JSNINewGlobalValue(JSNIEnv* env, JSValueRef val)
     \brief Creates a new global reference to the JavaScript value referred to by
 the val argument. The global value must be explicitly disposed of by
-calling DeleteGlobalValue(), except that the global value is set
-by calling SetGCCallback(). The global value will be alive
-untile calling DeleteGlobalValue() to dispose it.
+calling DeleteGlobalValue() or JSNIGlobalValueRelease(). The global value will be alive
+untile calling DeleteGlobalValue() or JSNIGlobalValueRelease() to dispose it.
+DeleteGlobalValue() dispose it immediately, whereas JSNIGlobalValueRelease()
+dispose it when decrease the reference count to zero.
     \param env The JSNI enviroment pointer.
     \param val A JavaScript value.
     \return Returns a global value.
@@ -616,11 +617,32 @@ JSGlobalValueRef JSNINewGlobalValue(JSNIEnv* env, JSValueRef val);
 
 /*! \fn void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val)
     \brief Deletes the global reference pointed by val.
+Once JSNIDeleteGlobalValue is called, the val is available to be garbage collected.
     \param env The JSNI enviroment pointer.
     \param val A JSGlobalValueRef value.
     \return None.
 */
 void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val);
+
+/*! \fn size_t JSNIGlobalValueAcquire(JSNIEnv* env, JSGlobalValueRef val)
+    \brief Acquire the val means to increase the reference count of the val.
+Once the reference count of the val equals to zero, the val is available to
+be garbage collected.
+    \param env The JSNI enviroment pointer.
+    \param val A JSGlobalValueRef value.
+    \return The reference count.
+*/
+size_t JSNIGlobalValueAcquire(JSNIEnv* env, JSGlobalValueRef val);
+
+/*! \fn size_t JSNIGlobalValueRelease(JSNIEnv* env, JSGlobalValueRef val)
+    \brief Release the val means to decrease the reference count of the val.
+Once the reference count of the val equals to zero, the val is available to
+be garbage collected.
+    \param env The JSNI enviroment pointer.
+    \param val A JSGlobalValueRef value.
+    \return The reference count.
+*/
+size_t JSNIGlobalValueRelease(JSNIEnv* env, JSGlobalValueRef val);
 
 /*! \fn JSValueRef JSNIGetGlobalValue(JSNIEnv* env, JSGlobalValueRef val)
     \brief Returns a local JSValueRef value from a JSGlobalValueRef value.
@@ -631,9 +653,9 @@ void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val);
 JSValueRef JSNIGetGlobalValue(JSNIEnv* env, JSGlobalValueRef val);
 
 /*! \fn void JSNISetGCCallback(JSNIEnv* env, JSGlobalValueRef val, void* args, JSNIGCCallback callback)
-    \brief Sets a callback which will be called
-when the JavaScript value pointed by val is freed.
-The developer can pass an argument to callback by args.
+    \brief Sets a callback which will be called when the JavaScript value pointed by val is freed.
+The developer can pass an argument to callback by args. JSNISetGCCallback() is only valid when reference count
+is bigger than zero.
     \param env The JSNI enviroment pointer.
     \param val A JSGlobalValueRef value.
     \param args A pointer to an argument passed to callback.
@@ -707,7 +729,10 @@ struct _JSNIEnv {
 // JSNI Versions.
 #define JSNI_VERSION_1_0 0x00010000
 #define JSNI_VERSION_1_1 0x00010001
+// 2.0 is not compatibale with 1.1.
+// Since 2.0, we should be compatible with old versions.
 #define JSNI_VERSION_2_0 0x00020000
+#define JSNI_VERSION_2_1 0x00020001
 
 #if defined(__cplusplus)
 extern "C" {

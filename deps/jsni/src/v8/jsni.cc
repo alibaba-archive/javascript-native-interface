@@ -71,6 +71,8 @@ class JSNI {
   static const int kGetterIndex = 1;
   static const int kSetterIndex = 2;
   static const int kAccessorFieldCount = 3;
+  // JSNINewGlobalValue is created with kInitialReferenceCount = 1.
+  static const size_t kInitialReferenceCount = 1;
 
   class JSRef {
    public:
@@ -81,13 +83,19 @@ class JSNI {
     }
 
     static void Delete(JSRef* ref) {
-      delete ref;
+      if (ref->callback_ != nullptr) {
+        ref->persistent_.SetWeak(ref, FakeGCCallback, WeakCallbackType::kParameter);
+      } else {
+        delete ref;
+      }
     }
 
+    // If SetWeak, to delete *this* should be delayed in the fininalize callback.
+    // else, when count_ is zero or JSNIDeleteGlobalValue is called, delete *this*
+    // immediately.
     void SetWeak(void* data, JSNIGCCallback callback) {
       data_ = data;
       callback_ = callback;
-      persistent_.SetWeak(this, FakeGCCallback, WeakCallbackType::kParameter);
     }
 
     void* GetData() {
@@ -107,18 +115,54 @@ class JSNI {
       }
     }
 
+    size_t Count() {
+      return count_;
+    }
+
+    size_t Ref() {
+      return ++count_;
+    }
+
+    size_t UnRef() {
+      if (count_ == 0) {
+        //TODO Log error.
+        return 0;
+      }
+      if (--count_ == 0) {
+        Delete(this);
+      }
+      return count_;
+    }
+
    private:
     JSRef(Isolate* isolate, Local<Value> val)
-         : persistent_(isolate, val) {
+         : persistent_(isolate, val),
+           callback_(nullptr),
+           count_(kInitialReferenceCount) {
     }
 
     ~JSRef() {
       persistent_.Reset();
     }
 
+    static void FakeGCCallback(const WeakCallbackInfo<JSRef>& info) {
+      Isolate* isolate = info.GetIsolate();
+      JSNIEnv* env = reinterpret_cast<JSNIEnv*>(isolate->GetEnv());
+      JSNI::JSRef* ref =
+        reinterpret_cast<JSNI::JSRef*>(info.GetParameter());
+      JSNIGCCallback callback = ref->GetCallback();
+
+      if (callback != nullptr) {
+        callback(env, ref->GetData());
+      }
+      // Reset and delete the global.
+      delete ref;
+    }
+
     Persistent<Value> persistent_;
     void* data_;
     JSNIGCCallback callback_;
+    size_t count_;
   };
 
   // TODO(jiny) FunctionCallback should use this JSNICallbackInfoWrap.
@@ -243,20 +287,6 @@ class JSNI {
     nativeFunc(env, (JSNICallbackInfo)&jsni_info);
   }
 
-  static void FakeGCCallback(const WeakCallbackInfo<JSRef>& info) {
-    Isolate* isolate = info.GetIsolate();
-    JSNIEnv* env = reinterpret_cast<JSNIEnv*>(isolate->GetEnv());
-    JSNI::JSRef* ref =
-      reinterpret_cast<JSNI::JSRef*>(info.GetParameter());
-    JSNIGCCallback callback = ref->GetCallback();
-
-    if (callback != nullptr) {
-      callback(env, ref->GetData());
-    }
-    // Reset and delete the global.
-    JSNI::JSRef::Delete(ref);
-  }
-
   static Local<Value> ToV8LocalValue(JSValueRef val) {
     return *reinterpret_cast<Local<Value>*>(&val);
   }
@@ -332,7 +362,7 @@ class JSNI {
 
 int JSNIGetVersion(JSNIEnv* env) {
   PREPARE_API_CALL(env);
-  return JSNI_VERSION_2_0;
+  return JSNI_VERSION_2_1;
 }
 
 bool JSNIRegisterMethod(JSNIEnv* env, JSValueRef recv,
@@ -994,6 +1024,16 @@ JSGlobalValueRef JSNINewGlobalValue(JSNIEnv* env, JSValueRef val) {
 void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val) {
   PREPARE_API_CALL(env);
   JSNI::JSRef::Delete(reinterpret_cast<JSNI::JSRef*>(val));
+}
+
+size_t JSNIGlobalValueAcquire(JSNIEnv* env, JSGlobalValueRef val) {
+  JSNI::JSRef* ref = reinterpret_cast<JSNI::JSRef*>(val);
+  return ref->Ref();
+}
+
+size_t JSNIGlobalValueRelease(JSNIEnv* env, JSGlobalValueRef val) {
+  JSNI::JSRef* ref = reinterpret_cast<JSNI::JSRef*>(val);
+  return ref->UnRef();
 }
 
 JSValueRef JSNIGetGlobalValue(JSNIEnv* env, JSGlobalValueRef val) {

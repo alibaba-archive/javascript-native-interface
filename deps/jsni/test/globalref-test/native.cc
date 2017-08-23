@@ -64,48 +64,56 @@ void testGlobalGC(JSNIEnv* env, JSNICallbackInfo info) {
   RequestGC();
 }
 
-int global_native = 200;
-
-void nativeWeakGCCallback(JSNIEnv* env, void* info) {
-  int get_global_native = *reinterpret_cast<int*>(info);
-  assert(get_global_native == 200);
-  global_native += 1;
-}
-
-void testGlobalWeakCallback(JSNIEnv* env, JSNICallbackInfo info) {
-  JSNIPushEscapableLocalScope(env);
-  JSValueRef str = JSNINewStringFromUtf8(env, "it's a string", -1);
-  JSGlobalValueRef str_global = JSNINewGlobalValue(env, str);
-  JSNIPopEscapableLocalScope(env, NULL);
-
-  JSNISetGCCallback(env, str_global, &global_native, nativeWeakGCCallback);
-  RequestGC();
-  assert(global_native == 201);
-}
-
-int global_native_2 = 200;
+int global_native_1 = 200;
 void nativeGCCallback(JSNIEnv* env, void* info) {
   int get_global_native = *reinterpret_cast<int*>(info);
   assert(get_global_native == 200);
-  global_native_2 += 1;
+  global_native_1 += 1;
 }
 
 void testGCCallback(JSNIEnv* env, JSNICallbackInfo info) {
   JSNIPushEscapableLocalScope(env);
   JSValueRef str = JSNINewStringFromUtf8(env, "it's a string", -1);
   JSGlobalValueRef str_global = JSNINewGlobalValue(env, str);
-  JSNISetGCCallback(env, str_global, &global_native_2, nativeGCCallback);
+  JSNISetGCCallback(env, str_global, &global_native_1, nativeGCCallback);
+  JSNIDeleteGlobalValue(env, str_global);
   JSNIPopEscapableLocalScope(env, NULL);
 
   RequestGC();
-  assert(global_native_2 == 201);
+  assert(global_native_1 == 201);
+}
+
+int global_native_2 = 200;
+void nativeGCCallback_2(JSNIEnv* env, void* info) {
+  int get_global_native = *reinterpret_cast<int*>(info);
+  assert(get_global_native == 200);
+  global_native_2 += 1;
+}
+
+void testAcquireRelease(JSNIEnv* env, JSNICallbackInfo info) {
+  int version = JSNIGetVersion(env);
+  // Keep compatible with old version of vm implementation of jsni.
+  if (version >= JSNI_VERSION_2_1) {
+    JSNIPushEscapableLocalScope(env);
+    JSValueRef str = JSNINewStringFromUtf8(env, "it's a string", -1);
+    JSGlobalValueRef str_global = JSNINewGlobalValue(env, str);
+    JSNIGlobalValueAcquire(env, str_global);
+    JSNISetGCCallback(env, str_global, &global_native_2, nativeGCCallback_2);
+    JSNIGlobalValueRelease(env, str_global);
+    JSNIGlobalValueRelease(env, str_global);
+    JSNIPopEscapableLocalScope(env, NULL);
+
+    RequestGC();
+    assert(global_native_2 == 201);
+  } else {
+    printf("JSNI version of implementation should not be less than JSNI_VERSION_2_1\n");
+  }
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "testGlobal", testGlobal);
   JSNIRegisterMethod(env, exports, "testGlobalGC", testGlobalGC);
-  JSNIRegisterMethod(env, exports, "testGlobalWeakCallback",
-    testGlobalWeakCallback);
   JSNIRegisterMethod(env, exports, "testGCCallback", testGCCallback);
-  return JSNI_VERSION_2_0;
+  JSNIRegisterMethod(env, exports, "testAcquireRelease", testAcquireRelease);
+  return JSNI_VERSION_2_1;
 }
