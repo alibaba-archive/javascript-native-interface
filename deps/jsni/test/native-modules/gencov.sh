@@ -8,19 +8,23 @@
 
 
 # Usage:
-# 1. Use cpbind.sh to replace binding.gyp
-# with another gyp which is configured with -lgcov
+# 1. Use binding-code-coverage.gyp and jsni-code-coverage.gyp
+# instead of binding.gyp and jsni.gyp which are configured with -lgcov
 
-# 2. Use gencov.sh:
+# 2. Build node and native-modules use new gyp files.
+
+# 3. Run run.sh to run tests.
+
+# 4. Run gencov.sh:
 # $./gencov.sh 
 
 
 # *gcno, *.gcda
-root_dir=`pwd`"/../../../"
+root_dir=`pwd`"/../../../../"
 GCS="Release/obj.target/native/native.*"
 JSNIGCS=$root_dir"/out/Release/obj.target/jsni/deps/jsni/src/v8/*"
 JSNISRC=$root_dir"/deps/jsni/src/v8/"
-TESTSRC=$root_dir"/deps/jsni/test/"
+TESTSRC=$root_dir"/deps/jsni/test/native-modules/"
 JSNIGENDIR=$root_dir"/out"
 
 # result and *.info dir.
