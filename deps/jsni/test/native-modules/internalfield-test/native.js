@@ -26,7 +26,7 @@
 
 const native = nativeLoad("native");
 
-var o = native.setHidden();
-native.testHidden(o);
+var o = native.testSetInternal();
+native.testGetInternal(o);
 
 process.exit();

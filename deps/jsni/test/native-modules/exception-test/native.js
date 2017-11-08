@@ -32,7 +32,7 @@ var str = "string";
 
 assert.throws(
   () => {
-    native.throwTypeError(str);
+    native.testThrowTypeError(str);
   },
   function(error) {
     return error.toString() === "TypeError: Wrong parameter type."
@@ -42,7 +42,7 @@ assert.throws(
 
 assert.throws(
   () => {
-    native.throwRangeError(str);
+    native.testThrowRangeError(str);
   },
   function(error) {
     return error.toString() === "RangeError: Range is out of limit."
@@ -52,7 +52,7 @@ assert.throws(
 
 assert.throws(
   () => {
-    native.throwError(str);
+    native.testThrowError(str);
   },
   function(error) {
     return error.toString() === "Error: Error."
@@ -68,7 +68,7 @@ function throwError() {
 
 assert.throws(
   () => {
-    native.hasPendingException(throwError);
+    native.testHasPendingException(throwError);
   },
   function(error) {
     return error === err;
@@ -78,7 +78,7 @@ assert.throws(
 
 assert.doesNotThrow(
   () => {
-    native.clearPendingException(throwError);
+    native.testClearPendingException(throwError);
   },
   Error,
   "No error should be catched."

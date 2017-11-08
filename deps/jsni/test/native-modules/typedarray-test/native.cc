@@ -49,7 +49,7 @@ class External
   int data;
 };
 
-void createTypedArray(JSNIEnv* env, JSNICallbackInfo info) {
+void testCreateTypedArray(JSNIEnv* env, JSNICallbackInfo info) {
   uint8_t a[] = {1, 2, 3};
   uint8_t* new_array = static_cast<uint8_t*>(malloc(sizeof a));
   memcpy(new_array, a, sizeof a);
@@ -75,7 +75,7 @@ void testIsArray(JSNIEnv* env, JSNICallbackInfo info) {
   assert(JSNIIsArray(env, check));
 }
 
-void testIsExternailized(JSNIEnv* env, JSNICallbackInfo info) {
+void testIsArrayExternailized(JSNIEnv* env, JSNICallbackInfo info) {
   External* ext = new External(123);
   JSNIPushLocalScope(env);
   JSValueRef js_typed_array =
@@ -89,8 +89,8 @@ void testIsExternailized(JSNIEnv* env, JSNICallbackInfo info) {
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "createTypedArray", createTypedArray);
+  JSNIRegisterMethod(env, exports, "testCreateTypedArray", testCreateTypedArray);
   JSNIRegisterMethod(env, exports, "testIsArray", testIsArray);
-  JSNIRegisterMethod(env, exports, "testIsExternailized", testIsExternailized);
+  JSNIRegisterMethod(env, exports, "testIsArrayExternailized", testIsArrayExternailized);
   return JSNI_VERSION_2_0;
 }

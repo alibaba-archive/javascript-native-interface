@@ -27,8 +27,8 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
-var s = native.symbol("symbol_s");
-var empty_s = native.symbol();
+var s = native.testSymbol("symbol_s");
+var empty_s = native.testSymbol();
 
 assert(typeof s === "symbol");
 assert(s.toString(), "Symbol(symbol_s)");

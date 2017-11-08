@@ -29,7 +29,7 @@ const native = nativeLoad("native");
 
 native.gc = gc;
 
-var typedArray = native.createTypedArray();
+var typedArray = native.testCreateTypedArray();
 
 assert.strictEqual(
   typeof typedArray,
@@ -44,6 +44,6 @@ assert.strictEqual(typedArray[2], 3);
 var arr = [];
 native.testIsArray(arr);
 
-native.testIsExternailized();
+native.testIsArrayExternailized();
 
 process.exit();

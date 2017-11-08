@@ -27,7 +27,7 @@
 #include <assert.h>
 #include <jsni.h>
 
-void HelloWorld(JSNIEnv* env, JSNICallbackInfo info) {
+void testHelloWorld(JSNIEnv* env, JSNICallbackInfo info) {
   int version = JSNIGetVersion(env);
   assert(version >= JSNI_VERSION_2_0);
   JSValueRef js_str = JSNINewStringFromUtf8(env, "Hello, world!", -1);
@@ -35,6 +35,6 @@ void HelloWorld(JSNIEnv* env, JSNICallbackInfo info) {
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "HelloWorld", HelloWorld);
+  JSNIRegisterMethod(env, exports, "testHelloWorld", testHelloWorld);
   return JSNI_VERSION_2_0;
 }

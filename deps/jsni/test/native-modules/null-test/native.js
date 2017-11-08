@@ -31,35 +31,35 @@ assert(native.testNull() === null);
 
 assert.throws(
   () => {
-    native.isNull("");
+    native.testIsNull("");
   },
   TypeError
 )
 
 assert.throws(
   () => {
-    native.isNull(NaN);
+    native.testIsNull(NaN);
   },
   TypeError
 )
 
 assert.throws(
   () => {
-    native.isNull({});
+    native.testIsNull({});
   },
   TypeError
 )
 
 assert.throws(
   () => {
-    native.isNull(undefined);
+    native.testIsNull(undefined);
   },
   TypeError
 )
 
 assert.doesNotThrow(
   () => {
-    native.isNull(null);
+    native.testIsNull(null);
   },
   TypeError
 )

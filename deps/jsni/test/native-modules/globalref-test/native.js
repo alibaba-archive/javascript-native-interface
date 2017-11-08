@@ -31,7 +31,7 @@ native.gc = gc;
 
 assert(native.testGlobal() === 100);
 native.testGlobalGC();
-native.testGCCallback();
-native.testAcquireRelease();
+native.testGlobalGCCallback();
+native.testGlobalAcquireRelease();
 
 process.exit();

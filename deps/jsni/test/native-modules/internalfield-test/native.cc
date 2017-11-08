@@ -29,14 +29,14 @@
 
 int field_int = 123;
 
-void setHidden(JSNIEnv* env, JSNICallbackInfo info) {
+void testSetInternal(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef object = JSNINewObjectWithInternalField(env, 1);
   assert(JSNIInternalFieldCount(env, object) == 1);
   JSNISetInternalField(env, object, 0, reinterpret_cast<void*>(&field_int));
   JSNISetReturnValue(env, info, object);
 }
 
-void testHidden(JSNIEnv* env, JSNICallbackInfo info) {
+void testGetInternal(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef object = JSNIGetArgOfCallback(env, info, 0);
   void* field_ptr = JSNIGetInternalField(env, object, 0);
   int field_int_get = *reinterpret_cast<int*>(field_ptr);
@@ -44,7 +44,7 @@ void testHidden(JSNIEnv* env, JSNICallbackInfo info) {
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "setHidden", setHidden);
-  JSNIRegisterMethod(env, exports, "testHidden", testHidden);
+  JSNIRegisterMethod(env, exports, "testSetInternal", testSetInternal);
+  JSNIRegisterMethod(env, exports, "testGetInternal", testGetInternal);
   return JSNI_VERSION_2_0;
 }

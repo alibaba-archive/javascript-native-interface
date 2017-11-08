@@ -29,7 +29,7 @@ const native = nativeLoad("native");
 
 // Test getter and setter.
 var obj = {};
-native.defineProperty(obj);
+native.testDefineProperty(obj);
 
 assert.strictEqual(obj.abc, 101);
 obj.abc = 1000;
@@ -39,7 +39,7 @@ assert.strictEqual(obj.setter, "setter is set.");
 
 // Test define property.
 var testPropertyObject = {};
-native.defineProperty2(testPropertyObject);
+native.testDefineProperty2(testPropertyObject);
 
 // Writable
 assert.strictEqual(testPropertyObject.readWrite, 1);

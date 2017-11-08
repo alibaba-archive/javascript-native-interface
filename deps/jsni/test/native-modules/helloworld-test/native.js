@@ -27,6 +27,6 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
-assert(native.HelloWorld() === "Hello, world!");
+assert(native.testHelloWorld() === "Hello, world!");
 
 process.exit();

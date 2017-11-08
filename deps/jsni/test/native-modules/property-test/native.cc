@@ -63,7 +63,7 @@ void setter(JSNIEnv* env, JSNICallbackInfo info) {
   *callback_data_p = static_cast<int>(value);
 }
 
-void DefineProperty(JSNIEnv* env, JSNICallbackInfo info) {
+void testDefineProperty(JSNIEnv* env, JSNICallbackInfo info) {
   int version = JSNIGetVersion(env);
   assert(version >= JSNI_VERSION_2_0);
 
@@ -78,7 +78,7 @@ void DefineProperty(JSNIEnv* env, JSNICallbackInfo info) {
   JSNIDefineProperty(env, obj, "abc", des);
 }
 
-void DefineProperty2(JSNIEnv* env, JSNICallbackInfo info) {
+void testDefineProperty2(JSNIEnv* env, JSNICallbackInfo info) {
   int version = JSNIGetVersion(env);
   assert(version >= JSNI_VERSION_2_0);
 
@@ -125,7 +125,7 @@ void DefineProperty2(JSNIEnv* env, JSNICallbackInfo info) {
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "defineProperty", DefineProperty);
-  JSNIRegisterMethod(env, exports, "defineProperty2", DefineProperty2);
+  JSNIRegisterMethod(env, exports, "testDefineProperty", testDefineProperty);
+  JSNIRegisterMethod(env, exports, "testDefineProperty2", testDefineProperty2);
   return JSNI_VERSION_2_0;
 }

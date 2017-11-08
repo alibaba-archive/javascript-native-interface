@@ -31,17 +31,17 @@ var notPrimitive = {a : 1};
 var notObject = 123;
 var notFunc = 123;
 
-native.BoolCheck(notPrimitive);
-native.NumberCheck(notPrimitive);
-native.StringCheck(notPrimitive);
+native.testBoolCheck(notPrimitive);
+native.testNumberCheck(notPrimitive);
+native.testStringCheck(notPrimitive);
 try {
-  native.FunctionCheck(notFunc);
+  native.testFunctionCheck(notFunc);
 } catch(e) {
   var indexString = "is not a function";
   assert.notEqual(e.toString().indexOf(indexString), -1);
 }
 
-native.ArrayCheck(notObject);
-native.ObjectCheck(notObject);
+native.testArrayCheck(notObject);
+native.testObjectCheck(notObject);
 
 process.exit();

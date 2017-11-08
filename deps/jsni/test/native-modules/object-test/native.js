@@ -36,13 +36,13 @@ var object = {
   object: {test: "object"}
 };
 
-assert(native.testHas(object, "string"));
-assert(native.testHas(object, "array"));
-assert(native.testHas(object, "object"));
+assert(native.testObjectHas(object, "string"));
+assert(native.testObjectHas(object, "array"));
+assert(native.testObjectHas(object, "object"));
 
-assert.strictEqual(native.testGet(object, "string"), "hello world");
-assert.deepStrictEqual(native.testGet(object, "array"), [1, 2]);
-assert.deepStrictEqual(native.testGet(object, "object"), {test: "object"});
+assert.strictEqual(native.testObjectGet(object, "string"), "hello world");
+assert.deepStrictEqual(native.testObjectGet(object, "array"), [1, 2]);
+assert.deepStrictEqual(native.testObjectGet(object, "object"), {test: "object"});
 
 native.testObject();
 
@@ -50,6 +50,6 @@ native.testObject();
 var obj = {};
 var protoObj = {proto: "proto"};
 Object.setPrototypeOf(obj, protoObj);
-assert(protoObj === native.testGetProto(obj));
+assert(protoObj === native.testObjectGetProto(obj));
 
 process.exit();

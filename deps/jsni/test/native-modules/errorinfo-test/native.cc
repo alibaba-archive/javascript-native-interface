@@ -60,14 +60,14 @@ void AssertHelper(JSNIEnv* env) {
   }
 }
 
-void BoolCheck(JSNIEnv* env, JSNICallbackInfo info) {
+void testBoolCheck(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
   bool result = JSNIToCBool(env, arg);
   assert(!result);
   AssertHelper(env);
 }
 
-void NumberCheck(JSNIEnv* env, JSNICallbackInfo info) {
+void testNumberCheck(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
 
   {
@@ -77,14 +77,14 @@ void NumberCheck(JSNIEnv* env, JSNICallbackInfo info) {
   }
 }
 
-void FunctionCheck(JSNIEnv* env, JSNICallbackInfo info) {
+void testFunctionCheck(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
   JSValueRef result = JSNICallFunction(env, arg, JSNINewNull(env), 0, nullptr);
   AssertHelper(env);
   assert(JSNIIsEmpty(env, result));
 }
 
-void ArrayCheck(JSNIEnv* env, JSNICallbackInfo info) {
+void testArrayCheck(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
   size_t result_len;
   {
@@ -117,7 +117,7 @@ void ArrayCheck(JSNIEnv* env, JSNICallbackInfo info) {
   }
 }
 
-void StringCheck(JSNIEnv* env, JSNICallbackInfo info) {
+void testStringCheck(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
   size_t result_len;
   {
@@ -134,7 +134,7 @@ void StringCheck(JSNIEnv* env, JSNICallbackInfo info) {
   }
 }
 
-void ObjectCheck(JSNIEnv* env, JSNICallbackInfo info) {
+void testObjectCheck(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
 
   {
@@ -158,11 +158,11 @@ void ObjectCheck(JSNIEnv* env, JSNICallbackInfo info) {
 
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "BoolCheck", BoolCheck);
-  JSNIRegisterMethod(env, exports, "NumberCheck", NumberCheck);
-  JSNIRegisterMethod(env, exports, "FunctionCheck", FunctionCheck);
-  JSNIRegisterMethod(env, exports, "ArrayCheck", ArrayCheck);
-  JSNIRegisterMethod(env, exports, "StringCheck", StringCheck);
-  JSNIRegisterMethod(env, exports, "ObjectCheck", ObjectCheck);
+  JSNIRegisterMethod(env, exports, "testBoolCheck", testBoolCheck);
+  JSNIRegisterMethod(env, exports, "testNumberCheck", testNumberCheck);
+  JSNIRegisterMethod(env, exports, "testFunctionCheck", testFunctionCheck);
+  JSNIRegisterMethod(env, exports, "testArrayCheck", testArrayCheck);
+  JSNIRegisterMethod(env, exports, "testStringCheck", testStringCheck);
+  JSNIRegisterMethod(env, exports, "testObjectCheck", testObjectCheck);
   return JSNI_VERSION_2_0;
 }

@@ -27,7 +27,7 @@
 #include <jsni.h>
 #include <assert.h>
 
-void getBoolean(JSNIEnv* env, JSNICallbackInfo info) {
+void testGetBoolean(JSNIEnv* env, JSNICallbackInfo info) {
   {
     JSValueRef bool_val = JSNINewBoolean(env, true);
     assert(JSNIIsBoolean(env, bool_val));
@@ -44,7 +44,7 @@ void getBoolean(JSNIEnv* env, JSNICallbackInfo info) {
   }
 }
 
-void isBoolean(JSNIEnv* env, JSNICallbackInfo info) {
+void testIsBoolean(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef bool_object = JSNIGetArgOfCallback(env, info, 0);
   bool is_boolean = JSNIIsBoolean(env, bool_object);
   JSNISetReturnValue(env, info, JSNINewBoolean(env, is_boolean));
@@ -52,7 +52,7 @@ void isBoolean(JSNIEnv* env, JSNICallbackInfo info) {
 
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "getBoolean", getBoolean);
-  JSNIRegisterMethod(env, exports, "isBoolean", isBoolean);
+  JSNIRegisterMethod(env, exports, "testGetBoolean", testGetBoolean);
+  JSNIRegisterMethod(env, exports, "testIsBoolean", testIsBoolean);
   return JSNI_VERSION_2_0;
 }

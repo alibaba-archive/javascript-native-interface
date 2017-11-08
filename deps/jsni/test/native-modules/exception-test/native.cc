@@ -27,33 +27,33 @@
 #include <jsni.h>
 #include <assert.h>
 
-void throwTypeError(JSNIEnv* env, JSNICallbackInfo info) {
+void testThrowTypeError(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
   if (!JSNIIsNumber(env, arg)) {
     JSNIThrowTypeErrorException(env, "Wrong parameter type.");
   }
 }
 
-void throwRangeError(JSNIEnv* env, JSNICallbackInfo info) {
+void testThrowRangeError(JSNIEnv* env, JSNICallbackInfo info) {
   if (JSNIGetArgsLengthOfCallback(env, info) > 0) {
     JSNIThrowRangeErrorException(env, "Range is out of limit.");
   }
 }
 
-void throwError(JSNIEnv* env, JSNICallbackInfo info) {
+void testThrowError(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef arg = JSNIGetArgOfCallback(env, info, 0);
   if (!JSNIIsNumber(env, arg)) {
     JSNIThrowErrorException(env, "Error.");
   }
 }
 
-void hasPendingException(JSNIEnv* env, JSNICallbackInfo info) {
+void testHasPendingException(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef func = JSNIGetArgOfCallback(env, info, 0);
   JSNICallFunction(env, func, JSNINewNull(env), 0, nullptr);
   assert(JSNIHasException(env) == true);
 }
 
-void clearPendingException(JSNIEnv* env, JSNICallbackInfo info) {
+void testClearPendingException(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef func = JSNIGetArgOfCallback(env, info, 0);
   JSNICallFunction(env, func, JSNINewNull(env), 0, nullptr);
   assert(JSNIHasException(env) == true);
@@ -61,11 +61,11 @@ void clearPendingException(JSNIEnv* env, JSNICallbackInfo info) {
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "throwTypeError", throwTypeError);
-  JSNIRegisterMethod(env, exports, "throwRangeError", throwRangeError);
-  JSNIRegisterMethod(env, exports, "throwError", throwError);
-  JSNIRegisterMethod(env, exports, "hasPendingException", hasPendingException);
-  JSNIRegisterMethod(env, exports, "clearPendingException",
-    clearPendingException);
+  JSNIRegisterMethod(env, exports, "testThrowTypeError", testThrowTypeError);
+  JSNIRegisterMethod(env, exports, "testThrowRangeError", testThrowRangeError);
+  JSNIRegisterMethod(env, exports, "testThrowError", testThrowError);
+  JSNIRegisterMethod(env, exports, "testHasPendingException", testHasPendingException);
+  JSNIRegisterMethod(env, exports, "testClearPendingException",
+    testClearPendingException);
   return JSNI_VERSION_2_0;
 }

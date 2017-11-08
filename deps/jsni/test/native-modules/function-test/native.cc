@@ -38,7 +38,7 @@ void NativeFunction(JSNIEnv* env, JSNICallbackInfo info) {
   JSNISetReturnValue(env, info, val);
 }
 
-void newNativeFunction(JSNIEnv* env, JSNICallbackInfo info) {
+void testNewNativeFunction(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef func = JSNINewFunction(env, NativeFunction);
   JSNISetReturnValue(env, info, func);
 }
@@ -51,7 +51,7 @@ void testIsFunction(JSNIEnv* env, JSNICallbackInfo info) {
   assert(JSNIIsFunction(env, val));
 }
 
-void callFunction(JSNIEnv* env, JSNICallbackInfo info) {
+void testCallFunction(JSNIEnv* env, JSNICallbackInfo info) {
   int arg_length = JSNIGetArgsLengthOfCallback(env, info);
   if ( arg_length < 1) {
     JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
@@ -71,15 +71,15 @@ void callFunction(JSNIEnv* env, JSNICallbackInfo info) {
   JSNISetReturnValue(env, info, result);
 }
 
-void getThis(JSNIEnv* env, JSNICallbackInfo info) {
+void testGetFunctionThis(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef this_value = JSNIGetThisOfCallback(env, info);
   JSNISetReturnValue(env, info, this_value);
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "newNativeFunction", newNativeFunction);
+  JSNIRegisterMethod(env, exports, "testNewNativeFunction", testNewNativeFunction);
   JSNIRegisterMethod(env, exports, "testIsFunction", testIsFunction);
-  JSNIRegisterMethod(env, exports, "callFunction", callFunction);
-  JSNIRegisterMethod(env, exports, "getThis", getThis);
+  JSNIRegisterMethod(env, exports, "testCallFunction", testCallFunction);
+  JSNIRegisterMethod(env, exports, "testGetFunctionThis", testGetFunctionThis);
   return JSNI_VERSION_2_0;
 }

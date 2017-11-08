@@ -27,7 +27,7 @@
 #include <jsni.h>
 #include <assert.h>
 
-void symbol(JSNIEnv* env, JSNICallbackInfo info) {
+void testSymbol(JSNIEnv* env, JSNICallbackInfo info) {
   int argc = JSNIGetArgsLengthOfCallback(env, info);
   JSValueRef s;
   if (argc > 0) {
@@ -42,6 +42,6 @@ void symbol(JSNIEnv* env, JSNICallbackInfo info) {
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "symbol", symbol);
+  JSNIRegisterMethod(env, exports, "testSymbol", testSymbol);
   return JSNI_VERSION_2_0;
 }

@@ -44,7 +44,7 @@ void testObject(JSNIEnv* env, JSNICallbackInfo info) {
   assert(!JSNIHasProperty(env, obj, "property1"));
 }
 
-void testGet(JSNIEnv* env, JSNICallbackInfo info) {
+void testObjectGet(JSNIEnv* env, JSNICallbackInfo info) {
   if (JSNIGetArgsLengthOfCallback(env, info) < 2) {
     JSNIThrowRangeErrorException(env, "Arguments should be more than or equal 2.");
   }
@@ -57,7 +57,7 @@ void testGet(JSNIEnv* env, JSNICallbackInfo info) {
   JSNISetReturnValue(env, info, property);
 }
 
-void testHas(JSNIEnv* env, JSNICallbackInfo info) {
+void testObjectHas(JSNIEnv* env, JSNICallbackInfo info) {
   if (JSNIGetArgsLengthOfCallback(env, info) < 2) {
     JSNIThrowRangeErrorException(env, "Arguments should be more than or equal 2.");
   }
@@ -71,7 +71,7 @@ void testHas(JSNIEnv* env, JSNICallbackInfo info) {
   JSNISetReturnValue(env, info, js_has_property);
 }
 
-void testGetProto(JSNIEnv* env, JSNICallbackInfo info) {
+void testObjectGetProto(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef obj = JSNIGetArgOfCallback(env, info, 0);
   JSValueRef proto = JSNIGetPrototype(env, obj);
   JSNISetReturnValue(env, info, proto);
@@ -79,8 +79,8 @@ void testGetProto(JSNIEnv* env, JSNICallbackInfo info) {
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "testObject", testObject);
-  JSNIRegisterMethod(env, exports, "testGetProto", testGetProto);
-  JSNIRegisterMethod(env, exports, "testHas", testHas);
-  JSNIRegisterMethod(env, exports, "testGet", testGet);
+  JSNIRegisterMethod(env, exports, "testObjectGetProto", testObjectGetProto);
+  JSNIRegisterMethod(env, exports, "testObjectHas", testObjectHas);
+  JSNIRegisterMethod(env, exports, "testObjectGet", testObjectGet);
   return JSNI_VERSION_2_0;
 }

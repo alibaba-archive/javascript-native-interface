@@ -27,7 +27,7 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
-assert.strictEqual(native.testUtf8("string"), "hello, world!");
+assert.strictEqual(native.testStringUtf8("string"), "hello, world!");
 
 const empty = "";
 assert.strictEqual(native.testNewStringUtf8(empty), empty);

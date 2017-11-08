@@ -29,7 +29,7 @@
 #include <string.h>
 #include <stdio.h>
 
-void testUtf8(JSNIEnv* env, JSNICallbackInfo info) {
+void testStringUtf8(JSNIEnv* env, JSNICallbackInfo info) {
   if (JSNIGetArgsLengthOfCallback(env, info) < 1) {
     JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
   }
@@ -67,7 +67,7 @@ void testNewStringUtf8(JSNIEnv* env, JSNICallbackInfo info) {
 
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "testUtf8", testUtf8);
+  JSNIRegisterMethod(env, exports, "testStringUtf8", testStringUtf8);
   JSNIRegisterMethod(env, exports, "testNewStringUtf8", testNewStringUtf8);
   return JSNI_VERSION_2_0;
 }

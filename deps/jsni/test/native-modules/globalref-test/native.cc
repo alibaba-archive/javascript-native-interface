@@ -72,7 +72,7 @@ void nativeGCCallback(JSNIEnv* env, void* info) {
   global_native_1 += 1;
 }
 
-void testGCCallback(JSNIEnv* env, JSNICallbackInfo info) {
+void testGlobalGCCallback(JSNIEnv* env, JSNICallbackInfo info) {
   JSNIPushEscapableLocalScope(env);
   JSValueRef str = JSNINewStringFromUtf8(env, "it's a string", -1);
   JSGlobalValueRef str_global = JSNINewGlobalValue(env, str);
@@ -91,7 +91,7 @@ void nativeGCCallback_2(JSNIEnv* env, void* info) {
   global_native_2 += 1;
 }
 
-void testAcquireRelease(JSNIEnv* env, JSNICallbackInfo info) {
+void testGlobalAcquireRelease(JSNIEnv* env, JSNICallbackInfo info) {
   int version = JSNIGetVersion(env);
   // Keep compatible with old version of vm implementation of jsni.
   if (version >= JSNI_VERSION_2_1) {
@@ -114,7 +114,7 @@ void testAcquireRelease(JSNIEnv* env, JSNICallbackInfo info) {
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "testGlobal", testGlobal);
   JSNIRegisterMethod(env, exports, "testGlobalGC", testGlobalGC);
-  JSNIRegisterMethod(env, exports, "testGCCallback", testGCCallback);
-  JSNIRegisterMethod(env, exports, "testAcquireRelease", testAcquireRelease);
+  JSNIRegisterMethod(env, exports, "testGlobalGCCallback", testGlobalGCCallback);
+  JSNIRegisterMethod(env, exports, "testGlobalAcquireRelease", testGlobalAcquireRelease);
   return JSNI_VERSION_2_1;
 }

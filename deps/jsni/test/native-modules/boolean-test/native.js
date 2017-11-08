@@ -27,14 +27,14 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
-assert(native.getBoolean());
+assert(native.testGetBoolean());
 
-assert(native.isBoolean(true));
-assert(native.isBoolean(false));
-assert(!native.isBoolean(1));
-assert(!native.isBoolean("abc"));
-assert(!native.isBoolean({a: 1}));
-assert(!native.isBoolean(function() {}));
-assert(!native.isBoolean(Symbol("xxx")));
+assert(native.testIsBoolean(true));
+assert(native.testIsBoolean(false));
+assert(!native.testIsBoolean(1));
+assert(!native.testIsBoolean("abc"));
+assert(!native.testIsBoolean({a: 1}));
+assert(!native.testIsBoolean(function() {}));
+assert(!native.testIsBoolean(Symbol("xxx")));
 
 process.exit();
