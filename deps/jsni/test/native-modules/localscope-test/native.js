@@ -27,6 +27,6 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 native.gc = gc;
-assert(native.testLocalScope() === 200);
+assert.strictEqual(native.testLocalScope(), 200);
 
 process.exit();

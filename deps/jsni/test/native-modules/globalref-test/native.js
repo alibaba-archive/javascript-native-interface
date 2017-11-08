@@ -29,7 +29,7 @@ const native = nativeLoad("native");
 
 native.gc = gc;
 
-assert(native.testGlobal() === 100);
+assert.strictEqual(native.testGlobal(), 100);
 native.testGlobalGC();
 native.testGlobalGCCallback();
 native.testGlobalAcquireRelease();

@@ -27,7 +27,7 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
-assert(native.testNull() === null);
+assert.strictEqual(native.testNull(), null);
 
 assert.throws(
   () => {

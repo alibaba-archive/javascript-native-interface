@@ -32,13 +32,13 @@ var obj1 = {p1: 200};
 arr[0] = obj0;
 arr[1] = obj1;
 var new_array = native.testArray(arr);
-assert(new_array[0] === obj0);
-assert(new_array[1] === obj1);
+assert.strictEqual(new_array[0], obj0);
+assert.strictEqual(new_array[1], obj1);
 
 // test out of index.
-assert(native.testArrayIndex(arr.length + 1) === undefined);
+assert.strictEqual(native.testArrayIndex(arr.length + 1), undefined);
 
 // test negative index.
-assert(native.testArrayIndex(-1) === undefined);
+assert.strictEqual(native.testArrayIndex(-1), undefined);
 
 process.exit();

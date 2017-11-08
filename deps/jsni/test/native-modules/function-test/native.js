@@ -29,13 +29,13 @@ const native = nativeLoad("native");
 
 var func = native.testNewNativeFunction();
 var ret = func(200);
-assert(ret === 200);
+assert.strictEqual(ret, 200);
 
-assert(typeof func === "function");
+assert.strictEqual(typeof func, "function");
 native.testIsFunction(func);
 
 var ret1 = native.testCallFunction(func);
-assert(ret1 === 200);
+assert.strictEqual(ret1, 200);
 
 // Call function with this.
 function testThis() {
@@ -48,6 +48,6 @@ thisObject.count = 1;
 assert.strictEqual(native.testCallFunction(thisObject.func, thisObject), 1);
 
 var this_value = native.testGetFunctionThis();
-assert(this_value === native);
+assert.strictEqual(this_value, native);
 
 process.exit();

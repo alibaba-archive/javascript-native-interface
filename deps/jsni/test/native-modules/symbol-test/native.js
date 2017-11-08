@@ -30,10 +30,10 @@ const native = nativeLoad("native");
 var s = native.testSymbol("symbol_s");
 var empty_s = native.testSymbol();
 
-assert(typeof s === "symbol");
+assert.strictEqual(typeof s, "symbol");
 assert(s.toString(), "Symbol(symbol_s)");
 
-assert(typeof empty_s === "symbol");
+assert.strictEqual(typeof empty_s, "symbol");
 assert(empty_s.toString(), "Symbol()");
 
 process.exit();

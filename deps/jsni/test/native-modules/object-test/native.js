@@ -27,9 +27,6 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
-// Should test:
-// Object.Get/Has
-// Object.New
 var object = {
   string: "hello world",
   array: [1, 2],
@@ -50,6 +47,6 @@ native.testObject();
 var obj = {};
 var protoObj = {proto: "proto"};
 Object.setPrototypeOf(obj, protoObj);
-assert(protoObj === native.testObjectGetProto(obj));
+assert.strictEqual(protoObj, native.testObjectGetProto(obj));
 
 process.exit();
