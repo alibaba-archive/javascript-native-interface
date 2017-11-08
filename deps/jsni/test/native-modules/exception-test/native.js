@@ -30,23 +30,35 @@ var assert = require("assert");
 const native = nativeLoad("native");
 var str = "string";
 
-try {
-  native.throwTypeError(str);
-} catch(error) {
-  assert(error.toString() === "TypeError: Wrong parameter type.");
-}
+assert.throws(
+  () => {
+    native.throwTypeError(str);
+  },
+  function(error) {
+    return error.toString() === "TypeError: Wrong parameter type."
+  },
+  "TypeError should be thrown."
+)
 
-try {
-  native.throwRangeError(str);
-} catch(error) {
-  assert(error.toString() === "RangeError: Range is out of limit.");
-}
+assert.throws(
+  () => {
+    native.throwRangeError(str);
+  },
+  function(error) {
+    return error.toString() === "RangeError: Range is out of limit."
+  },
+  "RangeError should be thrown."
+)
 
-try {
-  native.throwError(str);
-} catch(error) {
-  assert(error.toString() === "Error: Error.");
-}
+assert.throws(
+  () => {
+    native.throwError(str);
+  },
+  function(error) {
+    return error.toString() === "Error: Error."
+  },
+  "Error should be thrown."
+)
 
 // Check pending exception and clear pending exception.
 var err = new Error("error.");
@@ -54,20 +66,22 @@ function throwError() {
   throw err;
 }
 
-var flag = false;
+assert.throws(
+  () => {
+    native.hasPendingException(throwError);
+  },
+  function(error) {
+    return error === err;
+  },
+  "Pending exception should be caught."
+);
 
-try {
-  native.hasPendingException(throwError);
-} catch(error) {
-  flag = true;
-}
-assert(flag);
-
-try {
-  native.clearPendingException(throwError);
-} catch(error) {
-  console.log("No error should be catched.");
-  assert(false);
-}
+assert.doesNotThrow(
+  () => {
+    native.clearPendingException(throwError);
+  },
+  Error,
+  "No error should be catched."
+)
 
 process.exit();

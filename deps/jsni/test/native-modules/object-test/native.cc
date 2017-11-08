@@ -44,6 +44,33 @@ void testObject(JSNIEnv* env, JSNICallbackInfo info) {
   assert(!JSNIHasProperty(env, obj, "property1"));
 }
 
+void testGet(JSNIEnv* env, JSNICallbackInfo info) {
+  if (JSNIGetArgsLengthOfCallback(env, info) < 2) {
+    JSNIThrowRangeErrorException(env, "Arguments should be more than or equal 2.");
+  }
+  JSValueRef arg0 = JSNIGetArgOfCallback(env, info, 0);
+  JSValueRef arg1 = JSNIGetArgOfCallback(env, info, 1);
+  size_t string_length = JSNIGetStringUtf8Length(env, arg1);
+  char name[string_length + 1];
+  JSNIGetStringUtf8Chars(env, arg1, name, string_length + 1);
+  JSValueRef property = JSNIGetProperty(env, arg0, name);
+  JSNISetReturnValue(env, info, property);
+}
+
+void testHas(JSNIEnv* env, JSNICallbackInfo info) {
+  if (JSNIGetArgsLengthOfCallback(env, info) < 2) {
+    JSNIThrowRangeErrorException(env, "Arguments should be more than or equal 2.");
+  }
+  JSValueRef arg0 = JSNIGetArgOfCallback(env, info, 0);
+  JSValueRef arg1 = JSNIGetArgOfCallback(env, info, 1);
+  size_t string_length = JSNIGetStringUtf8Length(env, arg1);
+  char name[string_length + 1];
+  JSNIGetStringUtf8Chars(env, arg1, name, string_length + 1);
+  bool has_property = JSNIHasProperty(env, arg0, name);
+  JSValueRef js_has_property = JSNINewBoolean(env, has_property);
+  JSNISetReturnValue(env, info, js_has_property);
+}
+
 void testGetProto(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef obj = JSNIGetArgOfCallback(env, info, 0);
   JSValueRef proto = JSNIGetPrototype(env, obj);
@@ -53,5 +80,7 @@ void testGetProto(JSNIEnv* env, JSNICallbackInfo info) {
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "testObject", testObject);
   JSNIRegisterMethod(env, exports, "testGetProto", testGetProto);
+  JSNIRegisterMethod(env, exports, "testHas", testHas);
+  JSNIRegisterMethod(env, exports, "testGet", testGet);
   return JSNI_VERSION_2_0;
 }

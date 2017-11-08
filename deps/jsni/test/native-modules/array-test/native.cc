@@ -27,7 +27,13 @@
 #include <jsni.h>
 #include <assert.h>
 
-
+void testIndex(JSNIEnv* env, JSNICallbackInfo info) {
+  JSValueRef array = JSNIGetArgOfCallback(env, info, 0);
+  JSValueRef index = JSNIGetArgOfCallback(env, info, 1);
+  JSValueRef element =
+    JSNIGetArrayElement(env, array, JSNIToCDouble(env, index));
+  JSNISetReturnValue(env, info, element);
+}
 
 void testArray(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef array = JSNIGetArgOfCallback(env, info, 0);
@@ -43,5 +49,6 @@ void testArray(JSNIEnv* env, JSNICallbackInfo info) {
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "testArray", testArray);
+  JSNIRegisterMethod(env, exports, "testIndex", testIndex);
   return JSNI_VERSION_2_0;
 }

@@ -29,11 +29,11 @@
 
 void NativeFunction(JSNIEnv* env, JSNICallbackInfo info) {
   if (JSNIGetArgsLengthOfCallback(env, info) < 1) {
-    // JSNIThrowRangeErrorException(env, "Arguments should be more than 1.");
+    JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
   }
   JSValueRef val = JSNIGetArgOfCallback(env, info, 0);
   if (!JSNIIsNumber(env, val)) {
-    // JSNIThrowErrorException(env, "Should be number.");
+    JSNIThrowErrorException(env, "Should be number.");
   }
   JSNISetReturnValue(env, info, val);
 }
@@ -45,22 +45,29 @@ void newNativeFunction(JSNIEnv* env, JSNICallbackInfo info) {
 
 void testIsFunction(JSNIEnv* env, JSNICallbackInfo info) {
   if (JSNIGetArgsLengthOfCallback(env, info) < 1) {
-    // JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
+    JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
   }
   JSValueRef val = JSNIGetArgOfCallback(env, info, 0);
   assert(JSNIIsFunction(env, val));
 }
 
 void callFunction(JSNIEnv* env, JSNICallbackInfo info) {
-  if (JSNIGetArgsLengthOfCallback(env, info) < 1) {
-    // JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
+  int arg_length = JSNIGetArgsLengthOfCallback(env, info);
+  if ( arg_length < 1) {
+    JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
   }
-  JSValueRef val = JSNIGetArgOfCallback(env, info, 0);
-  if (!JSNIIsFunction(env, val)) {
-    // JSNIThrowErrorException(env, "Should be function.");
+  JSValueRef function = JSNIGetArgOfCallback(env, info, 0);
+  if (!JSNIIsFunction(env, function)) {
+    JSNIThrowErrorException(env, "Should be function.");
   }
-  JSValueRef arg = JSNINewNumber(env, 200);
-  JSValueRef result = JSNICallFunction(env, val, JSNINewNull(env), 1, &arg);
+  JSValueRef result;
+  if (arg_length < 2) {
+    JSValueRef arg = JSNINewNumber(env, 200);
+    result = JSNICallFunction(env, function, JSNINewNull(env), 1, &arg);
+  } else {
+    JSValueRef this_object = JSNIGetArgOfCallback(env, info, 1);
+    result = JSNICallFunction(env, function, this_object, 0, nullptr);
+  }
   JSNISetReturnValue(env, info, result);
 }
 

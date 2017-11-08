@@ -27,6 +27,27 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
-assert(native.testUtf8("string") === "hello, world!");
+assert.strictEqual(native.testUtf8("string"), "hello, world!");
+
+const empty = "";
+assert.strictEqual(native.testNewStringUtf8(empty), empty);
+
+const chineseString = "你好世界";
+assert.strictEqual(native.testNewStringUtf8(chineseString), chineseString);
+
+const string1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+assert.strictEqual(native.testNewStringUtf8(string1), string1);
+
+const string2 = "?!@#$%^&*()_+-=[]{}/.,<>'\"\\";
+assert.strictEqual(native.testNewStringUtf8(string2), string2);
+
+const stirng3 = '¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿';
+assert.strictEqual(native.testNewStringUtf8(stirng3), stirng3);
+
+const string4 = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþ';
+assert.strictEqual(native.testNewStringUtf8(string4), string4);
+
+const stirng5 = '\u{2003}\u{2101}\u{2001}\u{202}\u{2011}';
+assert.strictEqual(native.testNewStringUtf8(stirng5), stirng5);
 
 process.exit();

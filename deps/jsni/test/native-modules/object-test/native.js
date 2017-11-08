@@ -27,8 +27,26 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
+// Should test:
+// Object.Get/Has
+// Object.New
+var object = {
+  string: "hello world",
+  array: [1, 2],
+  object: {test: "object"}
+};
+
+assert(native.testHas(object, "string"));
+assert(native.testHas(object, "array"));
+assert(native.testHas(object, "object"));
+
+assert.strictEqual(native.testGet(object, "string"), "hello world");
+assert.deepStrictEqual(native.testGet(object, "array"), [1, 2]);
+assert.deepStrictEqual(native.testGet(object, "object"), {test: "object"});
+
 native.testObject();
 
+// test JSNIGetPrototype.
 var obj = {};
 var protoObj = {proto: "proto"};
 Object.setPrototypeOf(obj, protoObj);

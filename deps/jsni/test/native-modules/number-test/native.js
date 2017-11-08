@@ -26,9 +26,27 @@
 
 var assert = require("assert");
 const native = nativeLoad("native");
-assert(native.testNewNumber() === 1);
+
+function testEqual(num) {
+  assert.strictEqual(native.testNewNumber(num), num);
+}
+
+var testArray =
+[
+-1, 0, 1,
+-4294967296, 4294967296,
+98765432123456789987654321234567899876543212345678998765432123456,
+-9876543212345678998765432123456789987654321234567899876543212345,
+Number.MAX_SAFE_INTEGER,
+Number.MAX_SAFE_INTEGER + 1,
+Number.MAX_VALUE,
+Number.MAX_VALUE + 1,
+Number.POSITIVE_INFINITY,
+Number.NEGATIVE_INFINITY
+];
+testArray.forEach(testEqual);
+
 native.testIsNumber(100);
 native.testNumber2Native(100.1);
-
 
 process.exit();

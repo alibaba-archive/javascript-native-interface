@@ -29,4 +29,39 @@ const native = nativeLoad("native");
 
 assert(native.testNull() === null);
 
+assert.throws(
+  () => {
+    native.isNull("");
+  },
+  TypeError
+)
+
+assert.throws(
+  () => {
+    native.isNull(NaN);
+  },
+  TypeError
+)
+
+assert.throws(
+  () => {
+    native.isNull({});
+  },
+  TypeError
+)
+
+assert.throws(
+  () => {
+    native.isNull(undefined);
+  },
+  TypeError
+)
+
+assert.doesNotThrow(
+  () => {
+    native.isNull(null);
+  },
+  TypeError
+)
+
 process.exit();

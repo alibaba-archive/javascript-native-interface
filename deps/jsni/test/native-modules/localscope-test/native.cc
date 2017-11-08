@@ -26,56 +26,26 @@
 
 #include <assert.h>
 #include <jsni.h>
-#include <v8.h>
 
-#define DEBUGV8 if (0)printf
-
-// This function is just for testing the correctness of JSNI API.
-int getNumHandlesInternal() {
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  int num_handles = v8::HandleScope::NumberOfHandles(isolate);
-  return num_handles;
+void RequestGC(JSNIEnv* env, JSNICallbackInfo info) {
+  JSValueRef test_wrap = JSNIGetThisOfCallback(env, info);
+  JSValueRef gc_func = JSNIGetProperty(env, test_wrap, "gc");
+  JSNICallFunction(env, gc_func, test_wrap, 0, nullptr);
 }
 
 void testLocalScope(JSNIEnv* env, JSNICallbackInfo info) {
-  int num_handles = 0;
   JSValueRef obj;
-  JSNIPushLocalScope(env);
-  num_handles = getNumHandlesInternal();
-  JSNIPopLocalScope(env);
-  assert(getNumHandlesInternal() == num_handles);
 
-  num_handles = 0;
   JSNIPushLocalScope(env);
-  num_handles = getNumHandlesInternal();
   obj = JSNINewNumber(env, 100);
   JSNIPopLocalScope(env);
-  assert(getNumHandlesInternal() == num_handles);
 
-
-  DEBUGV8("v8 begin\n");
-  num_handles = 0;
-  num_handles = getNumHandlesInternal();
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  {
-    v8::EscapableHandleScope ehs(isolate);
-    v8::Local<v8::Number> n(v8::Integer::New(isolate, 42));
-    ehs.Escape(n);
-  }
-  assert(getNumHandlesInternal() == num_handles + 1);
-  DEBUGV8("v8 end\n");
-
-
-  num_handles = 0;
-  num_handles = getNumHandlesInternal();
   JSNIPushEscapableLocalScope(env);
   obj = JSNINewNumber(env, 200);
   assert(JSNIIsNumber(env, obj));
   JSValueRef save = JSNIPopEscapableLocalScope(env, obj);
-  assert(getNumHandlesInternal() == num_handles + 1);
 
-  isolate->RequestGarbageCollectionForTesting(
-    v8::Isolate::kFullGarbageCollection);
+  RequestGC(env, info);
 
   assert(JSNIIsNumber(env, save));
   JSNISetReturnValue(env, info, save);

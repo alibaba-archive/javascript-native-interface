@@ -32,11 +32,10 @@
 #include <stdio.h>
 #include <v8.h>
 
-// Only for testing use.
-void RequestGC() {
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  isolate->RequestGarbageCollectionForTesting(
-    v8::Isolate::kFullGarbageCollection);
+void RequestGC(JSNIEnv* env, JSNICallbackInfo info) {
+  JSValueRef test_wrap = JSNIGetThisOfCallback(env, info);
+  JSValueRef gc_func = JSNIGetProperty(env, test_wrap, "gc");
+  JSNICallFunction(env, gc_func, test_wrap, 0, nullptr);
 }
 
 class External
@@ -83,8 +82,8 @@ void testIsExternailized(JSNIEnv* env, JSNICallbackInfo info) {
     JSNINewTypedArray(env, JsArrayTypeUint8,
                       ext, sizeof ext);
   JSNIPopLocalScope(env);
-  RequestGC();
-  RequestGC();
+  RequestGC(env, info);
+  RequestGC(env, info);
   assert(ext->data == 123);
   delete ext;
 }

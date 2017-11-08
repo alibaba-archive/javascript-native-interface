@@ -49,13 +49,13 @@ void throwError(JSNIEnv* env, JSNICallbackInfo info) {
 
 void hasPendingException(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef func = JSNIGetArgOfCallback(env, info, 0);
-  JSNICallFunction(env, func, JSNINewNull(env), 0, NULL);
+  JSNICallFunction(env, func, JSNINewNull(env), 0, nullptr);
   assert(JSNIHasException(env) == true);
 }
 
 void clearPendingException(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef func = JSNIGetArgOfCallback(env, info, 0);
-  JSNICallFunction(env, func, JSNINewNull(env), 0, NULL);
+  JSNICallFunction(env, func, JSNINewNull(env), 0, nullptr);
   assert(JSNIHasException(env) == true);
   JSNIClearException(env);
 }

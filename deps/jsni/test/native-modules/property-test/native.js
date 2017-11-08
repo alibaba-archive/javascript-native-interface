@@ -29,17 +29,48 @@ const native = nativeLoad("native");
 
 // Test getter and setter.
 var obj = {};
-native.define_property(obj);
+native.defineProperty(obj);
 
-assert(obj.abc === 101);
+assert.strictEqual(obj.abc, 101);
 obj.abc = 1000;
-assert(obj.abc === 1001);
-assert(obj.getter === "getter is set.");
-assert(obj.setter === "setter is set.");
+assert.strictEqual(obj.abc, 1001);
+assert.strictEqual(obj.getter, "getter is set.");
+assert.strictEqual(obj.setter, "setter is set.");
 
 // Test define property.
-var obj_2 = {};
-native.define_property_2(obj_2);
-assert(obj_2.abc_2 === "Hello world!");
+var testPropertyObject = {};
+native.defineProperty2(testPropertyObject);
+
+// Writable
+assert.strictEqual(testPropertyObject.readWrite, 1);
+testPropertyObject.readWrite = 2;
+assert.strictEqual(testPropertyObject.readWrite, 2);
+
+assert.strictEqual(testPropertyObject.readOnly, 1);
+assert.throws(
+  () => { "use strict"; testPropertyObject.readOnly = 2; },
+  TypeError,
+  "The property is read only."
+);
+
+// Enumerable
+assert.strictEqual(testPropertyObject.propertyIsEnumerable("enumerable"), true);
+assert.strictEqual(testPropertyObject.propertyIsEnumerable("notEnumerable"), false);
+
+// Configurable
+delete testPropertyObject.deletable;
+assert.strictEqual(testPropertyObject.deletable, undefined);
+
+delete testPropertyObject.notDeletable;
+assert.strictEqual(testPropertyObject.notDeletable, 1);
+assert.throws(
+  () => {
+    Object.defineProprety(testPropertyObject, "notDeletable", {
+      configurable: true
+    })
+  },
+  TypeError,
+  "The property is not configurable(deletable)."
+)
 
 process.exit();

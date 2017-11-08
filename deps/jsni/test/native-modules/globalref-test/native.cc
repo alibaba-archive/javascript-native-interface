@@ -26,13 +26,12 @@
 
 #include <assert.h>
 #include <jsni.h>
-#include <v8.h>
+#include <stdio.h>
 
-// Only for testing use.
-void RequestGC() {
-  v8::Isolate* isolate = v8::Isolate::GetCurrent();
-  isolate->RequestGarbageCollectionForTesting(
-    v8::Isolate::kFullGarbageCollection);
+void RequestGC(JSNIEnv* env, JSNICallbackInfo info) {
+  JSValueRef test_wrap = JSNIGetThisOfCallback(env, info);
+  JSValueRef gc_func = JSNIGetProperty(env, test_wrap, "gc");
+  JSNICallFunction(env, gc_func, test_wrap, 0, nullptr);
 }
 
 void testGlobal(JSNIEnv* env, JSNICallbackInfo info) {
@@ -52,8 +51,8 @@ void testGlobalGC(JSNIEnv* env, JSNICallbackInfo info) {
   JSNIPushEscapableLocalScope(env);
   JSValueRef num = JSNINewNumber(env, 100);
   JSGlobalValueRef num_global = JSNINewGlobalValue(env, num);
-  JSNIPopEscapableLocalScope(env, NULL);
-  RequestGC();
+  JSNIPopEscapableLocalScope(env, nullptr);
+  RequestGC(env, info);
 
   JSValueRef num_from_global = JSNIGetGlobalValue(env, num_global);
   assert(JSNIIsNumber(env, num_from_global));
@@ -61,7 +60,9 @@ void testGlobalGC(JSNIEnv* env, JSNICallbackInfo info) {
   assert(num_native == 100);
 
   JSNIDeleteGlobalValue(env, num_global);
-  RequestGC();
+  JSValueRef test_wrap = JSNIGetThisOfCallback(env, info);
+  JSNISetReturnValue(env, info, test_wrap);
+  RequestGC(env, info);
 }
 
 int global_native_1 = 200;
@@ -77,9 +78,9 @@ void testGCCallback(JSNIEnv* env, JSNICallbackInfo info) {
   JSGlobalValueRef str_global = JSNINewGlobalValue(env, str);
   JSNISetGCCallback(env, str_global, &global_native_1, nativeGCCallback);
   JSNIDeleteGlobalValue(env, str_global);
-  JSNIPopEscapableLocalScope(env, NULL);
+  JSNIPopEscapableLocalScope(env, nullptr);
 
-  RequestGC();
+  RequestGC(env, info);
   assert(global_native_1 == 201);
 }
 
@@ -101,9 +102,9 @@ void testAcquireRelease(JSNIEnv* env, JSNICallbackInfo info) {
     JSNISetGCCallback(env, str_global, &global_native_2, nativeGCCallback_2);
     JSNIGlobalValueRelease(env, str_global);
     JSNIGlobalValueRelease(env, str_global);
-    JSNIPopEscapableLocalScope(env, NULL);
+    JSNIPopEscapableLocalScope(env, nullptr);
 
-    RequestGC();
+    RequestGC(env, info);
     assert(global_native_2 == 201);
   } else {
     printf("JSNI version of implementation should not be less than JSNI_VERSION_2_1\n");

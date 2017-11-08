@@ -27,6 +27,6 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
-assert(native.testUndefined() === undefined);
+assert.strictEqual(native.testUndefined(), undefined);
 
 process.exit();

@@ -37,6 +37,16 @@ native.testIsFunction(func);
 var ret1 = native.callFunction(func);
 assert(ret1 === 200);
 
+// Call function with this.
+function testThis() {
+  return this.count;
+}
+
+var thisObject = {};
+thisObject.func = testThis;
+thisObject.count = 1;
+assert.strictEqual(native.callFunction(thisObject.func, thisObject), 1);
+
 var this_value = native.getThis();
 assert(this_value === native);
 

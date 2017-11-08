@@ -29,4 +29,12 @@ const native = nativeLoad("native");
 
 assert(native.getBoolean());
 
+assert(native.isBoolean(true));
+assert(native.isBoolean(false));
+assert(!native.isBoolean(1));
+assert(!native.isBoolean("abc"));
+assert(!native.isBoolean({a: 1}));
+assert(!native.isBoolean(function() {}));
+assert(!native.isBoolean(Symbol("xxx")));
+
 process.exit();

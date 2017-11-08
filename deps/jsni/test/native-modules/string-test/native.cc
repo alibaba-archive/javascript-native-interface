@@ -30,25 +30,44 @@
 #include <stdio.h>
 
 void testUtf8(JSNIEnv* env, JSNICallbackInfo info) {
-  JSValueRef value = JSNIGetArgOfCallback(env, info, 0);
-  assert(JSNIIsString(env, value));
+  if (JSNIGetArgsLengthOfCallback(env, info) < 1) {
+    JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
+  }
+  JSValueRef string = JSNIGetArgOfCallback(env, info, 0);
+  assert(JSNIIsString(env, string));
   const char* native_str = "hello, world!";
-  const size_t str_len = strlen(native_str);
+  const size_t string_length = strlen(native_str);
 
-  JSValueRef str_val = JSNINewStringFromUtf8(env, native_str, str_len);
-  assert(JSNIGetStringUtf8Length(env, str_val) == str_len);
+  JSValueRef str_val = JSNINewStringFromUtf8(env, native_str, string_length);
+  assert(JSNIGetStringUtf8Length(env, str_val) == string_length);
 
-  char get_str[str_len + 1];
-  JSNIGetStringUtf8Chars(env, str_val, get_str, str_len + 1);
-  for (size_t i = 0; i < str_len + 1; i++) {
-    assert(get_str[i] == native_str[i]);
+  char c_string[string_length + 1];
+  JSNIGetStringUtf8Chars(env, str_val, c_string, string_length + 1);
+  for (size_t i = 0; i < string_length + 1; i++) {
+    assert(c_string[i] == native_str[i]);
   }
 
   JSNISetReturnValue(env, info, str_val);
 }
 
+void testNewStringUtf8(JSNIEnv* env, JSNICallbackInfo info) {
+  if (JSNIGetArgsLengthOfCallback(env, info) < 1) {
+    JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
+  }
+  JSValueRef string = JSNIGetArgOfCallback(env, info, 0);
+  assert(JSNIIsString(env, string));
+
+  size_t string_length = JSNIGetStringUtf8Length(env, string);
+  char c_string[string_length];
+  JSNIGetStringUtf8Chars(env, string, c_string, string_length + 1);
+
+  JSValueRef new_string = JSNINewStringFromUtf8(env, c_string, string_length);
+  JSNISetReturnValue(env, info, new_string);
+}
+
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "testUtf8", testUtf8);
+  JSNIRegisterMethod(env, exports, "testNewStringUtf8", testNewStringUtf8);
   return JSNI_VERSION_2_0;
 }

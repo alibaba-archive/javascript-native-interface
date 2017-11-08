@@ -36,7 +36,7 @@ void getter(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef g_this = JSNIGetThisOfCallback(env, info);
   int* callback_data_p = reinterpret_cast<int*>(
     JSNIGetDataOfCallback(env, info));
-  assert(arg == NULL);
+  assert(arg == nullptr);
   assert(args_length == 0);
   JSValueRef str = JSNINewStringFromUtf8(env, "getter is set.", -1);
   JSNISetProperty(env, g_this, "getter", str);
@@ -53,7 +53,7 @@ void setter(JSNIEnv* env, JSNICallbackInfo info) {
   JSValueRef g_this = JSNIGetThisOfCallback(env, info);
   int* callback_data_p = reinterpret_cast<int*>(
     JSNIGetDataOfCallback(env, info));
-  assert(arg != NULL);
+  assert(arg != nullptr);
   assert(args_length == 1);
   assert(*callback_data_p == 100);
   JSValueRef str = JSNINewStringFromUtf8(env, "setter is set.", -1);
@@ -73,7 +73,7 @@ void DefineProperty(JSNIEnv* env, JSNICallbackInfo info) {
   JSNIAccessorPropertyDescriptor accesor =
     {getter, setter, attr, reinterpret_cast<void*>(&data)};
   JSNIPropertyDescriptor des =
-    {NULL, &accesor};
+    {nullptr, &accesor};
 
   JSNIDefineProperty(env, obj, "abc", des);
 }
@@ -83,16 +83,49 @@ void DefineProperty2(JSNIEnv* env, JSNICallbackInfo info) {
   assert(version >= JSNI_VERSION_2_0);
 
   JSValueRef obj = JSNIGetArgOfCallback(env, info, 0);
-  JSValueRef value = JSNINewStringFromUtf8(env, "Hello world!", -1);
-  JSNIPropertyAttributes attr = JSNINone;
-  JSNIDataPropertyDescriptor data =
-    {value, attr};
-  JSNIPropertyDescriptor des = {&data, NULL};
-  JSNIDefineProperty(env, obj, "abc_2", des);
+
+  // Writable
+  JSNIDataPropertyDescriptor readWrite = {
+    JSNINewNumber(env, 1),
+    JSNINone
+  } ;
+  JSNIDefineProperty(env, obj, "readWrite", {&readWrite, nullptr});
+
+  JSNIDataPropertyDescriptor readOnly = {
+    JSNINewNumber(env, 1),
+    JSNIReadOnly
+  } ;
+  JSNIDefineProperty(env, obj, "readOnly", {&readOnly, nullptr});
+
+  // Enumerable
+  JSNIDataPropertyDescriptor enumerable = {
+    JSNINewNumber(env, 1),
+    JSNINone
+  } ;
+  JSNIDefineProperty(env, obj, "enumerable", {&enumerable, nullptr});
+
+  JSNIDataPropertyDescriptor notEnumerable = {
+    JSNINewNumber(env, 1),
+    JSNIDontEnum
+  } ;
+  JSNIDefineProperty(env, obj, "notEnumerable", {&notEnumerable, nullptr});
+
+  // Configurable
+  JSNIDataPropertyDescriptor deletable = {
+    JSNINewNumber(env, 1),
+    JSNINone
+  } ;
+  JSNIDefineProperty(env, obj, "deletable", {&deletable, nullptr});
+
+  JSNIDataPropertyDescriptor notDeletable = {
+    JSNINewNumber(env, 1),
+    JSNIDontDelete
+  } ;
+  JSNIDefineProperty(env, obj, "notDeletable", {&notDeletable, nullptr});
 }
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
-  JSNIRegisterMethod(env, exports, "define_property", DefineProperty);
-  JSNIRegisterMethod(env, exports, "define_property_2", DefineProperty2);
+  JSNIRegisterMethod(env, exports, "defineProperty", DefineProperty);
+  JSNIRegisterMethod(env, exports, "defineProperty2", DefineProperty2);
   return JSNI_VERSION_2_0;
 }

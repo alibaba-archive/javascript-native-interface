@@ -27,15 +27,19 @@
 var assert = require("assert");
 const native = nativeLoad("native");
 
+native.gc = gc;
+
 var typedArray = native.createTypedArray();
 
-console.assert(typeof typedArray === "object",
+assert.strictEqual(
+  typeof typedArray,
+  "object",
   "should be an object(typedArray)");
 
-assert(typedArray.constructor === Uint8Array);
-assert(typedArray[0] === 1);
-assert(typedArray[1] === 2);
-assert(typedArray[2] === 3);
+assert.strictEqual(typedArray.constructor, Uint8Array);
+assert.strictEqual(typedArray[0], 1);
+assert.strictEqual(typedArray[1], 2);
+assert.strictEqual(typedArray[2], 3);
 
 var arr = [];
 native.testIsArray(arr);

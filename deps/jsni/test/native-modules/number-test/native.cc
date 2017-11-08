@@ -28,7 +28,12 @@
 #include <jsni.h>
 
 void testNewNumber(JSNIEnv* env, JSNICallbackInfo info) {
-  JSValueRef number_val = JSNINewNumber(env, 1);
+  if (JSNIGetArgsLengthOfCallback(env, info) < 1) {
+    JSNIThrowRangeErrorException(env, "Arguments should be more than 0.");
+  }
+  JSValueRef input = JSNIGetArgOfCallback(env, info, 0);
+  double num_input = JSNIToCDouble(env, input);
+  JSValueRef number_val = JSNINewNumber(env, num_input);
   assert(JSNIIsNumber(env, number_val));
   JSNISetReturnValue(env, info, number_val);
 }

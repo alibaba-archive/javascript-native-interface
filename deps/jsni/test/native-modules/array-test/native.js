@@ -35,4 +35,10 @@ var new_array = native.testArray(arr);
 assert(new_array[0] === obj0);
 assert(new_array[1] === obj1);
 
+// test out of index.
+assert(native.testIndex(arr.length + 1) === undefined);
+
+// test negative index.
+assert(native.testIndex(-1) === undefined);
+
 process.exit();

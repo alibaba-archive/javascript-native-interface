@@ -28,14 +28,31 @@
 #include <assert.h>
 
 void getBoolean(JSNIEnv* env, JSNICallbackInfo info) {
-  JSValueRef bool_val = JSNINewBoolean(env, true);
-  assert(JSNIIsBoolean(env, bool_val));
-  bool native_val = JSNIToCBool(env, bool_val);
-  assert(native_val);
-  JSNISetReturnValue(env, info, bool_val);
+  {
+    JSValueRef bool_val = JSNINewBoolean(env, true);
+    assert(JSNIIsBoolean(env, bool_val));
+    bool native_val = JSNIToCBool(env, bool_val);
+    assert(native_val);
+    JSNISetReturnValue(env, info, bool_val);
+  }
+
+  {
+    JSValueRef bool_val = JSNINewBoolean(env, false);
+    assert(JSNIIsBoolean(env, bool_val));
+    bool native_val = JSNIToCBool(env, bool_val);
+    assert(!native_val);
+  }
 }
+
+void isBoolean(JSNIEnv* env, JSNICallbackInfo info) {
+  JSValueRef bool_object = JSNIGetArgOfCallback(env, info, 0);
+  bool is_boolean = JSNIIsBoolean(env, bool_object);
+  JSNISetReturnValue(env, info, JSNINewBoolean(env, is_boolean));
+}
+
 
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "getBoolean", getBoolean);
+  JSNIRegisterMethod(env, exports, "isBoolean", isBoolean);
   return JSNI_VERSION_2_0;
 }

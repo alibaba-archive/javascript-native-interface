@@ -34,7 +34,7 @@ void symbol(JSNIEnv* env, JSNICallbackInfo info) {
     JSValueRef str = JSNIGetArgOfCallback(env, info, 0);
     s = JSNINewSymbol(env, str);
   } else {
-    s = JSNINewSymbol(env, NULL);
+    s = JSNINewSymbol(env, nullptr);
   }
   assert(JSNIIsSymbol(env, s));
 

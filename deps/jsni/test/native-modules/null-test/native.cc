@@ -33,7 +33,15 @@ void testNull(JSNIEnv* env, JSNICallbackInfo info) {
   JSNISetReturnValue(env, info, null_val);
 }
 
+void isNull(JSNIEnv* env, JSNICallbackInfo info) {
+  JSValueRef val = JSNIGetArgOfCallback(env, info, 0);
+  if (!JSNIIsNull(env, val)) {
+    JSNIThrowTypeErrorException(env, "Not a Null object.");
+  }
+}
+
 int JSNIInit(JSNIEnv* env, JSValueRef exports) {
   JSNIRegisterMethod(env, exports, "testNull", testNull);
+  JSNIRegisterMethod(env, exports, "isNull", isNull);
   return JSNI_VERSION_2_0;
 }
