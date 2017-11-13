@@ -74,6 +74,13 @@ class JSNI {
   // JSNINewGlobalValue is created with kInitialReferenceCount = 1.
   static const size_t kInitialReferenceCount = 1;
 
+  static void PrintF(const char* format, ...) {
+    va_list arguments;
+    va_start(arguments, format);
+    base::OS::VPrint(format, arguments);
+    va_end(arguments);
+  }
+
   class JSRef {
    public:
     static JSRef* New(JSNIEnv* env, JSValueRef ref) {
@@ -83,6 +90,9 @@ class JSNI {
     }
 
     static void Delete(JSRef* ref) {
+      if (ref == nullptr) {
+        return;
+      }
       if (ref->callback_ != nullptr) {
         ref->persistent_.SetWeak(ref, FakeGCCallback, WeakCallbackType::kParameter);
       } else {
@@ -125,7 +135,7 @@ class JSNI {
 
     size_t UnRef() {
       if (count_ == 0) {
-        //TODO Log error.
+        PrintF("Error: decreasing ref count when ref count is 0.");
         return 0;
       }
       if (--count_ == 0) {
@@ -150,6 +160,7 @@ class JSNI {
       JSNIEnv* env = reinterpret_cast<JSNIEnv*>(isolate->GetEnv());
       JSNI::JSRef* ref =
         reinterpret_cast<JSNI::JSRef*>(info.GetParameter());
+      assert(ref != nullptr);
       JSNIGCCallback callback = ref->GetCallback();
 
       if (callback != nullptr) {
@@ -322,7 +333,9 @@ class JSNI {
         "PushLocalScope",
         "Entering the JSNI API without proper locking in place");
 
-    JSNIEnvExt* jsni_env_ext = reinterpret_cast<JSNIEnvExt*>(isolate->GetEnv());
+    JSNIEnvExt* jsni_env_ext =
+      reinterpret_cast<JSNIEnvExt*>(
+        reinterpret_cast<Isolate*>(isolate)->GetEnv());
     jsni_env_ext->stacked_local_scope.push_back(local_scope);
   }
 
@@ -949,7 +962,8 @@ void JSNIPushLocalScope(JSNIEnv* env) {
 void JSNIPopLocalScope(JSNIEnv* env) {
   PREPARE_API_CALL(env);
   internal::Isolate* isolate = JSNI::GetInternalIsolate(env);
-  JSNIEnvExt* jsni_env_ext = reinterpret_cast<JSNIEnvExt*>(isolate->GetEnv());
+  JSNIEnvExt* jsni_env_ext =
+    reinterpret_cast<JSNIEnvExt*>(env);
 
   // Set error code and return early
   // if the number of JSNIPopLocalScope used is more than JSNIPushLocalScope.
@@ -981,7 +995,8 @@ JSValueRef JSNIPopEscapableLocalScope(JSNIEnv* env, JSValueRef val) {
   PREPARE_API_CALL(env);
   internal::Isolate* isolate = JSNI::GetInternalIsolate(env);
   i::Heap* heap = isolate->heap();
-  JSNIEnvExt* jsni_env_ext = reinterpret_cast<JSNIEnvExt*>(isolate->GetEnv());
+  JSNIEnvExt* jsni_env_ext =
+    reinterpret_cast<JSNIEnvExt*>(env);
 
   // Set error code and return early
   // if the number of JSNIPopLocalScope used is more than JSNIPushLocalScope.
@@ -1026,12 +1041,13 @@ void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val) {
   JSNI::JSRef::Delete(reinterpret_cast<JSNI::JSRef*>(val));
 }
 
-size_t JSNIGlobalValueAcquire(JSNIEnv* env, JSGlobalValueRef val) {
+size_t JSNIAcquireGlobalValue(JSNIEnv* env, JSGlobalValueRef val) {
+  PREPARE_API_CALL(env);
   JSNI::JSRef* ref = reinterpret_cast<JSNI::JSRef*>(val);
   return ref->Ref();
 }
 
-size_t JSNIGlobalValueRelease(JSNIEnv* env, JSGlobalValueRef val) {
+size_t JSNIReleaseGlobalValue(JSNIEnv* env, JSGlobalValueRef val) {
   JSNI::JSRef* ref = reinterpret_cast<JSNI::JSRef*>(val);
   return ref->UnRef();
 }
@@ -1087,8 +1103,7 @@ void JSNIThrowRangeErrorException(JSNIEnv* env, const char* errmsg) {
 JSNIErrorInfo JSNIGetLastErrorInfo(JSNIEnv* env) {
   // Do not clear error here.
   // PREPARE_API_CALL(env);
-  internal::Isolate* isolate = JSNI::GetInternalIsolate(env);
-  JSNIEnvExt* jsni_env_ext = reinterpret_cast<JSNIEnvExt*>(isolate->GetEnv());
+  JSNIEnvExt* jsni_env_ext = reinterpret_cast<JSNIEnvExt*>(env);
 
   int err = jsni_env_ext->error_code;
   jsni_env_ext->last_error_info.msg = error_messages[err];

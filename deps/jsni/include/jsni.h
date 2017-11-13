@@ -605,9 +605,9 @@ JSValueRef JSNIPopEscapableLocalScope(JSNIEnv* env, JSValueRef val);
 /*! \fn JSGlobalValueRef JSNINewGlobalValue(JSNIEnv* env, JSValueRef val)
     \brief Creates a new global reference to the JavaScript value referred to by
 the val argument. The global value must be explicitly disposed of by
-calling DeleteGlobalValue() or JSNIGlobalValueRelease(). The global value will be alive
-untile calling DeleteGlobalValue() or JSNIGlobalValueRelease() to dispose it.
-DeleteGlobalValue() dispose it immediately, whereas JSNIGlobalValueRelease()
+calling JSNIDeleteGlobalValue() or JSNIReleaseGlobalValue(). The global value will be alive
+untile calling JSNIDeleteGlobalValue() or JSNIReleaseGlobalValue() to dispose it.
+JSNIDeleteGlobalValue() dispose it immediately, whereas JSNIReleaseGlobalValue()
 dispose it when decrease the reference count to zero.
     \param env The JSNI enviroment pointer.
     \param val A JavaScript value.
@@ -617,14 +617,13 @@ JSGlobalValueRef JSNINewGlobalValue(JSNIEnv* env, JSValueRef val);
 
 /*! \fn void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val)
     \brief Deletes the global reference pointed by val.
-Once JSNIDeleteGlobalValue is called, the val is available to be garbage collected.
     \param env The JSNI enviroment pointer.
     \param val A JSGlobalValueRef value.
     \return None.
 */
 void JSNIDeleteGlobalValue(JSNIEnv* env, JSGlobalValueRef val);
 
-/*! \fn size_t JSNIGlobalValueAcquire(JSNIEnv* env, JSGlobalValueRef val)
+/*! \fn size_t JSNIAcquireGlobalValue(JSNIEnv* env, JSGlobalValueRef val)
     \brief Acquire the val means to increase the reference count of the val.
 Once the reference count of the val equals to zero, the val is available to
 be garbage collected.
@@ -632,9 +631,9 @@ be garbage collected.
     \param val A JSGlobalValueRef value.
     \return The reference count.
 */
-size_t JSNIGlobalValueAcquire(JSNIEnv* env, JSGlobalValueRef val);
+size_t JSNIAcquireGlobalValue(JSNIEnv* env, JSGlobalValueRef val);
 
-/*! \fn size_t JSNIGlobalValueRelease(JSNIEnv* env, JSGlobalValueRef val)
+/*! \fn size_t JSNIReleaseGlobalValue(JSNIEnv* env, JSGlobalValueRef val)
     \brief Release the val means to decrease the reference count of the val.
 Once the reference count of the val equals to zero, the val is available to
 be garbage collected.
@@ -642,7 +641,7 @@ be garbage collected.
     \param val A JSGlobalValueRef value.
     \return The reference count.
 */
-size_t JSNIGlobalValueRelease(JSNIEnv* env, JSGlobalValueRef val);
+size_t JSNIReleaseGlobalValue(JSNIEnv* env, JSGlobalValueRef val);
 
 /*! \fn JSValueRef JSNIGetGlobalValue(JSNIEnv* env, JSGlobalValueRef val)
     \brief Returns a local JSValueRef value from a JSGlobalValueRef value.

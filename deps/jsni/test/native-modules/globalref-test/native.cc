@@ -98,10 +98,10 @@ void testGlobalAcquireRelease(JSNIEnv* env, JSNICallbackInfo info) {
     JSNIPushEscapableLocalScope(env);
     JSValueRef str = JSNINewStringFromUtf8(env, "it's a string", -1);
     JSGlobalValueRef str_global = JSNINewGlobalValue(env, str);
-    JSNIGlobalValueAcquire(env, str_global);
+    JSNIAcquireGlobalValue(env, str_global);
     JSNISetGCCallback(env, str_global, &global_native_2, nativeGCCallback_2);
-    JSNIGlobalValueRelease(env, str_global);
-    JSNIGlobalValueRelease(env, str_global);
+    JSNIReleaseGlobalValue(env, str_global);
+    JSNIReleaseGlobalValue(env, str_global);
     JSNIPopEscapableLocalScope(env, nullptr);
 
     RequestGC(env, info);
