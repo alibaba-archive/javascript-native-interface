@@ -8,7 +8,7 @@ Now JSNI is implemented in Node.js(with v8 runtime engine).
 JSNI Add-on examples: deps/jsni/test
 
 ## API
-There is detailed description in the API reference: docs/jsni.md
+There is detailed description in the API reference: [jsni api reference](https://alibaba.github.io/javascript-native-interface/html/jsni_8h.html)
 
 ## Members
 Please add yourself if you participate in this project.
